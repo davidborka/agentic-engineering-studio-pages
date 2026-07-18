@@ -1,0 +1,1076 @@
+<!doctype html>
+<!--
+  DISPOSABLE PHASE 0 PROTOTYPE — NOT PRODUCTION AUTHORITY.
+  Artifact revision: DEC-001/r1. Bump the meta tag and PROTOTYPE_REVISION on every
+  approved artifact change. Linear NEO-119 remains the decision authority.
+-->
+<html lang="en" data-motion="auto">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="prototype-revision" content="DEC-001/r1">
+  <meta name="color-scheme" content="dark">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'unsafe-inline'; style-src 'unsafe-inline'; img-src 'self' data:; connect-src 'none'; font-src 'none'; object-src 'none'; base-uri 'none'; form-action 'none'">
+  <title>DEC-001 · The Screening Room</title>
+  <style>
+    :root {
+      color-scheme: dark;
+      --shell: #080a0f;
+      --shell-2: #0e121a;
+      --panel: #141923;
+      --line: #30394a;
+      --muted: #a8b1c2;
+      --text: #f4f7fb;
+      --accent: #8ee7ff;
+      --accent-ink: #02141a;
+      --warning: #ffd36e;
+      --danger: #ff8e93;
+      --success: #8bf0bb;
+      --rail: 13.5rem;
+      --dock: 5rem;
+      --radius: 0.85rem;
+      --focus: #fff1a8;
+      font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background: var(--shell);
+      color: var(--text);
+      scroll-behavior: smooth;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      min-width: 20rem;
+      padding-bottom: calc(var(--dock) + 1rem);
+      background:
+        radial-gradient(circle at 85% -10%, rgba(79, 123, 167, 0.13), transparent 33rem),
+        var(--shell);
+      line-height: 1.5;
+    }
+
+    button, input, textarea { font: inherit; }
+    button, a, input, textarea, summary { -webkit-tap-highlight-color: transparent; }
+    a { color: inherit; text-underline-offset: 0.2em; }
+    a:hover { color: var(--accent); }
+    button { color: inherit; }
+    ::selection { color: #061017; background: var(--accent); }
+
+    :focus-visible {
+      outline: 2px solid var(--focus);
+      outline-offset: 3px;
+    }
+
+    .skip-link {
+      position: fixed;
+      z-index: 100;
+      top: 0.75rem;
+      left: 0.75rem;
+      padding: 0.65rem 0.9rem;
+      color: #071014;
+      background: var(--focus);
+      border-radius: 0.35rem;
+      transform: translateY(-180%);
+    }
+    .skip-link:focus { transform: translateY(0); }
+    .sr-only {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      padding: 0;
+      margin: -1px;
+      overflow: hidden;
+      clip: rect(0, 0, 0, 0);
+      white-space: nowrap;
+      border: 0;
+    }
+
+    .mission-header {
+      min-height: 4.75rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1rem;
+      padding: 0.8rem 1.35rem;
+      border-bottom: 1px solid var(--line);
+      background: rgba(8, 10, 15, 0.94);
+      position: sticky;
+      top: 0;
+      z-index: 20;
+    }
+
+    .brand { display: flex; align-items: center; gap: 0.75rem; }
+    .brand-mark {
+      display: grid;
+      place-items: center;
+      width: 2.6rem;
+      aspect-ratio: 1;
+      border: 1px solid #6c7a91;
+      border-radius: 50%;
+      font: 700 0.73rem/1 ui-monospace, monospace;
+      letter-spacing: 0.08em;
+      box-shadow: inset 0 0 0 0.3rem var(--shell), inset 0 0 0 0.36rem #6c7a91;
+    }
+    .brand-copy { display: grid; gap: 0.08rem; }
+    .brand-copy strong { font-size: 0.82rem; letter-spacing: 0.14em; }
+    .brand-copy span { color: var(--muted); font-size: 0.72rem; letter-spacing: 0.12em; }
+    .header-actions { display: flex; align-items: center; justify-content: flex-end; gap: 0.6rem; flex-wrap: wrap; }
+    .chip {
+      min-height: 2rem;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.45rem;
+      padding: 0.35rem 0.65rem;
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      color: var(--muted);
+      background: #0c1017;
+      font: 650 0.69rem/1.1 ui-monospace, monospace;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+    }
+    .chip.status { color: var(--warning); border-color: #766238; }
+    .status-dot { width: 0.45rem; aspect-ratio: 1; border-radius: 50%; background: currentColor; box-shadow: 0 0 0.7rem currentColor; }
+
+    .quiet-button, .primary-button, .secondary-button {
+      min-height: 2.65rem;
+      padding: 0.65rem 0.9rem;
+      border-radius: 0.45rem;
+      border: 1px solid var(--line);
+      cursor: pointer;
+    }
+    .quiet-button { min-height: 2rem; padding: 0.35rem 0.7rem; background: transparent; color: var(--muted); }
+    .quiet-button:hover, .secondary-button:hover { color: var(--text); border-color: #65718a; }
+    .primary-button { color: var(--accent-ink); background: var(--accent); border-color: var(--accent); font-weight: 750; }
+    .primary-button:hover { background: #b9f1ff; }
+    .secondary-button { background: #151c28; color: var(--text); }
+    button:disabled, a[aria-disabled="true"] { opacity: 0.45; cursor: not-allowed; }
+
+    .title-card {
+      max-width: 92rem;
+      margin: 0 auto;
+      padding: clamp(3rem, 8vw, 7rem) clamp(1.25rem, 5vw, 5.2rem) clamp(2.8rem, 6vw, 5.2rem) calc(var(--rail) + 3.5rem);
+    }
+    .eyebrow {
+      margin: 0 0 1rem;
+      color: var(--accent);
+      font: 700 0.74rem/1.2 ui-monospace, monospace;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+    }
+    h1 {
+      max-width: 18ch;
+      margin: 0;
+      font-size: clamp(2.45rem, 6.8vw, 6.8rem);
+      line-height: 0.98;
+      letter-spacing: -0.055em;
+      text-wrap: balance;
+    }
+    .title-lede { max-width: 46rem; margin: 1.7rem 0 0; color: var(--muted); font-size: clamp(1rem, 1.6vw, 1.25rem); }
+
+    .recommendation {
+      max-width: 68rem;
+      margin: 0 3rem 4rem calc(var(--rail) + 3.5rem);
+      display: grid;
+      grid-template-columns: minmax(10rem, 0.8fr) minmax(18rem, 2fr);
+      border: 1px solid #4b586c;
+      border-radius: var(--radius);
+      overflow: hidden;
+      background: linear-gradient(120deg, #111722, #141a25 60%, #101721);
+    }
+    .recommendation-label {
+      padding: 1.45rem;
+      border-right: 1px solid #4b586c;
+      color: var(--accent);
+      font: 700 0.75rem/1.5 ui-monospace, monospace;
+      letter-spacing: 0.13em;
+      text-transform: uppercase;
+    }
+    .recommendation-copy { padding: 1.35rem 1.55rem; }
+    .recommendation-copy strong { display: block; margin-bottom: 0.35rem; font-size: 1.15rem; }
+    .recommendation-copy p { margin: 0; max-width: 58rem; color: #c8d0dc; }
+
+    .direction-rail {
+      position: fixed;
+      z-index: 10;
+      left: 0;
+      top: 4.75rem;
+      bottom: var(--dock);
+      width: var(--rail);
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      gap: 0.45rem;
+      padding: 1rem;
+      border-right: 1px solid var(--line);
+      background: rgba(8, 10, 15, 0.88);
+      backdrop-filter: blur(16px);
+    }
+    .direction-rail a {
+      display: grid;
+      grid-template-columns: 2.2rem 1fr;
+      gap: 0.35rem;
+      padding: 0.75rem 0.7rem;
+      border: 1px solid transparent;
+      border-radius: 0.45rem;
+      color: var(--muted);
+      text-decoration: none;
+      font-size: 0.78rem;
+    }
+    .direction-rail a span { color: #758198; font-family: ui-monospace, monospace; }
+    .direction-rail a[aria-current="true"] { color: var(--text); background: #151b26; border-color: #414b5d; }
+    .rail-note { margin: 1rem 0 0.25rem; padding: 0 0.7rem; color: #778196; font-size: 0.67rem; text-transform: uppercase; letter-spacing: 0.1em; }
+
+    .stage-stack { margin-left: var(--rail); }
+    .stage {
+      position: relative;
+      min-height: 90svh;
+      overflow: hidden;
+      padding: clamp(3.5rem, 7vw, 7rem) clamp(1.25rem, 5.8vw, 6rem);
+      border-top: 1px solid var(--line);
+      isolation: isolate;
+    }
+    .stage-inner { width: min(100%, 78rem); margin: 0 auto; }
+    .stage-kicker { margin: 0 0 0.65rem; font-size: 0.76rem; letter-spacing: 0.15em; text-transform: uppercase; }
+    .stage h2 { margin: 0; font-size: clamp(2.2rem, 5vw, 5.4rem); line-height: 1; letter-spacing: -0.045em; }
+    .thesis { max-width: 52rem; margin: 1rem 0 2.3rem; font-size: clamp(1rem, 1.7vw, 1.25rem); }
+    .vignette { margin-bottom: 2.5rem; }
+
+    .fact-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 0.8rem;
+      margin: 1.6rem 0;
+    }
+    .fact { min-height: 8.5rem; padding: 1rem; border: 1px solid currentColor; }
+    .fact dt { margin-bottom: 0.75rem; font: 700 0.72rem/1 ui-monospace, monospace; letter-spacing: 0.13em; text-transform: uppercase; }
+    .fact dd { margin: 0; }
+    .fact strong { display: block; margin-bottom: 0.35rem; font-size: 1.08rem; }
+    .evidence { display: grid; gap: 0.55rem; margin: 1.6rem 0; }
+    details { border: 1px solid currentColor; }
+    summary { padding: 0.85rem 1rem; cursor: pointer; font-weight: 700; }
+    details p { margin: 0; padding: 0 1rem 1rem; max-width: 64rem; }
+    .tradeoff { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin: 1.7rem 0; }
+    .tradeoff p { margin: 0; padding: 1rem; border-left: 3px solid currentColor; }
+    .tradeoff strong { display: block; margin-bottom: 0.25rem; font-size: 0.72rem; letter-spacing: 0.1em; text-transform: uppercase; }
+
+    .commission {
+      position: relative;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.75rem;
+      min-height: 3.25rem;
+      padding: 0.75rem 1rem;
+      border: 1px solid currentColor;
+      cursor: pointer;
+      font-weight: 800;
+    }
+    .commission input { position: absolute; width: 1px; height: 1px; opacity: 0; }
+    .radio-mark { width: 1.15rem; aspect-ratio: 1; border: 2px solid currentColor; border-radius: 50%; padding: 0.19rem; background-clip: content-box; }
+    .commission input:checked + .radio-mark { background-color: currentColor; }
+    .commission:has(input:checked) { box-shadow: 0 0 0 2px currentColor; }
+    .commission:has(input:focus-visible) { outline: 2px solid var(--focus); outline-offset: 4px; }
+
+    /* Direction 01 — Orbital Command */
+    .orbital {
+      --orbital-blue: #8deaff;
+      --orbital-amber: #ffcf78;
+      color: #dffaff;
+      background:
+        radial-gradient(circle at 72% 28%, rgba(33, 165, 198, 0.18), transparent 25rem),
+        radial-gradient(circle at 22% 68%, rgba(105, 75, 192, 0.18), transparent 26rem),
+        #050b13;
+    }
+    .orbital::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      z-index: -1;
+      opacity: 0.32;
+      background-image:
+        radial-gradient(circle at 13% 17%, #fff 0 1px, transparent 1.4px),
+        radial-gradient(circle at 31% 72%, #fff 0 1px, transparent 1.4px),
+        radial-gradient(circle at 59% 24%, #8deaff 0 1px, transparent 1.4px),
+        radial-gradient(circle at 79% 79%, #fff 0 1px, transparent 1.4px);
+      background-size: 101px 97px, 137px 149px, 173px 131px, 211px 193px;
+    }
+    .orbital .stage-kicker, .orbital a { color: var(--orbital-blue); }
+    .orbital .thesis, .orbital .fact dd, .orbital details p { color: #a9c9d4; }
+    .orbital h2 { text-transform: uppercase; font-family: ui-monospace, monospace; letter-spacing: -0.06em; }
+    .orbit-scene {
+      position: relative;
+      display: grid;
+      place-items: center;
+      min-height: clamp(21rem, 47vw, 36rem);
+      overflow: hidden;
+      border: 1px solid #1e6073;
+      background: radial-gradient(circle, rgba(35, 137, 165, 0.15), transparent 48%);
+      clip-path: polygon(0 1.2rem, 1.2rem 0, calc(100% - 1.2rem) 0, 100% 1.2rem, 100% calc(100% - 1.2rem), calc(100% - 1.2rem) 100%, 1.2rem 100%, 0 calc(100% - 1.2rem));
+    }
+    .orbit-svg { position: absolute; inset: 0; width: 100%; height: 100%; opacity: 0.62; }
+    .orbit-svg circle { fill: #dffaff; }
+    .orbit-svg .accent-star { fill: var(--orbital-blue); }
+    .orbit-svg line { stroke: rgba(141, 234, 255, 0.2); stroke-width: 1; }
+    .orbit-assembly { position: absolute; width: min(36rem, 86vw); aspect-ratio: 1; animation: orbit-spin 90s linear infinite; }
+    .orbit-ring { position: absolute; inset: var(--inset); border: 1px solid rgba(141, 234, 255, 0.28); border-radius: 50%; }
+    .orbit-ring::before, .orbit-ring::after { content: ""; position: absolute; width: 0.55rem; aspect-ratio: 1; border-radius: 50%; background: var(--orbital-blue); box-shadow: 0 0 1rem var(--orbital-blue); }
+    .orbit-ring::before { top: 8%; left: 18%; }
+    .orbit-ring::after { right: 6%; bottom: 27%; background: var(--orbital-amber); box-shadow: 0 0 1rem var(--orbital-amber); }
+    .orbit-ring:nth-child(2) { transform: rotate(56deg); }
+    .orbit-ring:nth-child(3) { transform: rotate(126deg); }
+    .orbit-core { position: relative; z-index: 1; width: min(17rem, 56vw); aspect-ratio: 1; display: grid; place-items: center; text-align: center; padding: 2rem; border: 1px solid var(--orbital-blue); border-radius: 50%; background: radial-gradient(circle, #123244 0%, #07131e 68%); box-shadow: 0 0 4rem rgba(88, 210, 239, 0.2), inset 0 0 2rem rgba(88, 210, 239, 0.14); }
+    .orbit-core span { display: block; color: var(--orbital-blue); font: 700 0.68rem/1.4 ui-monospace, monospace; letter-spacing: 0.14em; text-transform: uppercase; }
+    .orbit-core strong { display: block; margin-top: 0.55rem; font-size: clamp(1.05rem, 2vw, 1.45rem); line-height: 1.15; }
+    .orbital .fact, .orbital details { color: #43859a; background: rgba(3, 17, 27, 0.7); }
+    .orbital .fact > *, .orbital details > * { color: #d9f5fb; }
+    .orbital .commission { color: var(--orbital-blue); background: #071721; }
+
+    /* Direction 02 — Cinematic Ledger */
+    .ledger {
+      color: #211e1a;
+      background: #e8e0d1;
+      background-image: linear-gradient(90deg, transparent 0, transparent calc(33.333% - 1px), rgba(62, 46, 31, 0.12) calc(33.333% - 1px), rgba(62, 46, 31, 0.12) 33.333%, transparent 33.333%, transparent calc(66.666% - 1px), rgba(62, 46, 31, 0.12) calc(66.666% - 1px), rgba(62, 46, 31, 0.12) 66.666%, transparent 66.666%);
+    }
+    .ledger .stage-kicker { color: #76552d; }
+    .ledger h2 { font-family: ui-serif, Georgia, serif; font-weight: 500; letter-spacing: -0.055em; }
+    .ledger .thesis { color: #4d4438; font-family: ui-serif, Georgia, serif; font-style: italic; }
+    .ledger a { color: #563a19; }
+    .ledger a:hover { color: #111; }
+    .ledger-head { display: grid; grid-template-columns: 2fr 1fr; align-items: end; gap: 2rem; border-bottom: 3px double #534838; padding-bottom: 1.5rem; }
+    .ledger-number { text-align: right; font: 400 clamp(5rem, 13vw, 11rem)/0.72 ui-serif, Georgia, serif; color: rgba(66, 50, 31, 0.18); }
+    .film-strip {
+      position: relative;
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 0.55rem;
+      padding: 2rem 1.35rem;
+      border-block: 2px solid #2d2923;
+      background:
+        repeating-linear-gradient(90deg, #2d2923 0 0.72rem, transparent 0.72rem 1.35rem) top 0.35rem left / 100% 0.45rem no-repeat,
+        repeating-linear-gradient(90deg, #2d2923 0 0.72rem, transparent 0.72rem 1.35rem) bottom 0.35rem left / 100% 0.45rem no-repeat,
+        rgba(255,255,255,0.18);
+    }
+    .film-frame { min-height: 7rem; padding: 1rem; border: 1px solid #766a59; display: flex; flex-direction: column; justify-content: space-between; }
+    .film-frame span { font: 700 0.68rem/1 ui-monospace, monospace; letter-spacing: 0.1em; text-transform: uppercase; color: #725b3d; }
+    .film-frame strong { font-family: ui-serif, Georgia, serif; font-size: clamp(1rem, 1.8vw, 1.35rem); }
+    .ledger .fact { border-width: 0 0 1px; padding-inline: 0; color: #4b4033; }
+    .ledger .fact dt { color: #76552d; }
+    .ledger details { color: #766a59; background: rgba(255,255,255,0.17); }
+    .ledger details > * { color: #211e1a; }
+    .ledger .tradeoff p { color: #4d4438; }
+    .ledger .commission { color: #211e1a; background: transparent; }
+    .ledger .commission:has(input:checked) { background: #211e1a; color: #f6eddf; box-shadow: none; }
+
+    /* Direction 03 — Signal Room */
+    .signal {
+      --signal-green: #a7ff83;
+      --signal-orange: #ffb65e;
+      color: #eefbe9;
+      background-color: #0a110c;
+      background-image:
+        linear-gradient(rgba(125, 233, 116, 0.05) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(125, 233, 116, 0.05) 1px, transparent 1px);
+      background-size: 2rem 2rem;
+      font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+    }
+    .signal::after { content: ""; position: absolute; inset: 0; z-index: -1; pointer-events: none; background: repeating-linear-gradient(0deg, transparent 0 3px, rgba(0,0,0,0.12) 3px 4px); }
+    .signal .stage-kicker, .signal a { color: var(--signal-green); }
+    .signal h2 { font-family: ui-monospace, monospace; text-transform: uppercase; }
+    .signal .thesis, .signal .fact dd, .signal details p { color: #b9cdb7; }
+    .signal-console { border: 1px solid #41653d; background: rgba(7, 16, 8, 0.88); box-shadow: 0 0 0 0.35rem #071008, 0 0 0 0.4rem #294328; }
+    .telemetry { display: flex; align-items: center; overflow: hidden; min-height: 2.45rem; border-bottom: 1px solid #41653d; color: var(--signal-green); }
+    .telemetry-label { position: relative; z-index: 1; flex: 0 0 auto; align-self: stretch; display: grid; place-items: center; padding: 0 0.8rem; background: var(--signal-green); color: #071008; font: 800 0.68rem/1 ui-monospace, monospace; }
+    .ticker-window { overflow: hidden; }
+    .ticker-track { width: max-content; white-space: nowrap; animation: ticker 24s linear infinite; font-size: 0.75rem; letter-spacing: 0.08em; }
+    .telemetry:hover .ticker-track, .telemetry:focus-within .ticker-track { animation-play-state: paused; }
+    .console-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1px; background: #2c4629; }
+    .console-cell { min-height: 9rem; padding: 1rem; background: #0b150c; }
+    .console-cell span { display: flex; align-items: center; gap: 0.5rem; color: #7d9a7a; font-size: 0.7rem; text-transform: uppercase; }
+    .led { display: inline-block; width: 0.5rem; aspect-ratio: 1; border-radius: 50%; background: var(--signal-green); box-shadow: 0 0 0.75rem var(--signal-green); }
+    .console-cell strong { display: block; margin-top: 1.7rem; color: #eefbe9; font-size: clamp(1.1rem, 2.1vw, 1.5rem); }
+    .signal .fact { border-color: #41653d; background: rgba(8, 19, 9, 0.85); }
+    .signal .fact dt { color: var(--signal-green); }
+    .signal details { color: #41653d; background: rgba(8, 19, 9, 0.85); }
+    .signal details > * { color: #eefbe9; }
+    .signal .tradeoff p { color: #c6d9c4; border-color: var(--signal-orange); }
+    .signal .commission { color: var(--signal-green); background: #0b180d; }
+
+    @keyframes orbit-spin { to { transform: rotate(360deg); } }
+    @keyframes ticker { to { transform: translateX(-50%); } }
+
+    .review-desk {
+      position: fixed;
+      z-index: 50;
+      left: var(--rail);
+      right: 0;
+      bottom: 0;
+      border-top: 1px solid #526076;
+      background: rgba(12, 16, 23, 0.97);
+      box-shadow: 0 -1.3rem 3rem rgba(0,0,0,0.45);
+      backdrop-filter: blur(22px);
+    }
+    .desk-bar { min-height: var(--dock); display: flex; align-items: center; gap: 1rem; padding: 0.75rem clamp(1rem, 3vw, 2.5rem); }
+    .desk-readout { min-width: 0; flex: 1; }
+    .desk-readout span { display: block; color: var(--muted); font: 700 0.66rem/1.2 ui-monospace, monospace; letter-spacing: 0.12em; text-transform: uppercase; }
+    .desk-readout strong { display: block; margin-top: 0.2rem; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .desk-actions { display: flex; align-items: center; gap: 0.6rem; }
+    .desk-panel { max-height: min(38rem, calc(100svh - 6rem)); overflow: auto; border-top: 1px solid var(--line); }
+    .desk-panel[hidden] { display: none; }
+    .desk-grid { max-width: 88rem; margin: 0 auto; display: grid; grid-template-columns: minmax(17rem, 0.8fr) minmax(22rem, 1.2fr); gap: 1.5rem; padding: 1.5rem clamp(1rem, 3vw, 2.5rem) 2rem; }
+    .field { display: grid; gap: 0.45rem; margin-bottom: 1rem; }
+    .field label { font-weight: 750; }
+    .field small, .microcopy { color: var(--muted); }
+    input[type="text"], textarea {
+      width: 100%;
+      padding: 0.8rem;
+      border: 1px solid #4b566a;
+      border-radius: 0.4rem;
+      color: var(--text);
+      background: #080c12;
+    }
+    textarea { min-height: 8rem; resize: vertical; }
+    .draft-status { min-height: 1.5rem; color: var(--muted); font-size: 0.8rem; }
+    .draft-status.error, .selection-error { color: var(--danger); }
+    .stale-banner { margin-bottom: 1rem; padding: 0.9rem; border: 1px solid #786434; background: #2a2515; }
+    .stale-banner p { margin: 0 0 0.65rem; color: #ffe4a1; }
+    .stale-actions { display: flex; gap: 0.55rem; }
+    .receipt-column { min-width: 0; }
+    .receipt-buttons { display: flex; flex-wrap: wrap; gap: 0.55rem; margin: 0.8rem 0; }
+    .receipt-preview { min-height: 8.5rem; max-height: 15rem; overflow: auto; margin: 0.8rem 0; padding: 0.85rem; border: 1px solid var(--line); color: #c7d0dd; background: #070a0f; font: 0.72rem/1.5 ui-monospace, monospace; white-space: pre-wrap; overflow-wrap: anywhere; }
+    .handoff { margin: 0.8rem 0 0; color: var(--muted); font-size: 0.8rem; }
+    .copy-fallback { padding: 0.9rem; border: 1px solid var(--warning); background: #282211; }
+    .copy-fallback[hidden] { display: none; }
+    .copy-fallback p { margin: 0 0 0.6rem; color: #ffe7ac; }
+    .copy-fallback textarea { min-height: 5rem; }
+
+    footer {
+      margin-left: var(--rail);
+      padding: 3rem clamp(1.25rem, 5vw, 5rem) 4rem;
+      border-top: 1px solid var(--line);
+      color: var(--muted);
+      background: #080a0f;
+    }
+    .footer-grid { max-width: 78rem; margin: 0 auto; display: grid; grid-template-columns: 1.2fr 1fr 1fr; gap: 2rem; }
+    footer h2 { margin: 0 0 0.7rem; color: var(--text); font-size: 0.82rem; letter-spacing: 0.1em; text-transform: uppercase; }
+    footer p { margin: 0.35rem 0; font-size: 0.82rem; }
+    footer code { color: #dce6f5; }
+    .disposable { color: var(--warning); }
+
+    @media (max-width: 68rem) {
+      :root { --rail: 10.5rem; }
+      .title-card { padding-left: calc(var(--rail) + 2.5rem); }
+      .recommendation { margin-left: calc(var(--rail) + 2.5rem); margin-right: 2rem; }
+      .stage { padding-inline: clamp(1.5rem, 4vw, 3.5rem); }
+      .direction-rail a { grid-template-columns: 1.7rem 1fr; }
+    }
+
+    @media (max-width: 45rem) {
+      :root { --rail: 0rem; --dock: 4.8rem; }
+      body { padding-bottom: calc(var(--dock) + 0.5rem); }
+      .mission-header { min-height: auto; align-items: flex-start; padding: 0.8rem 1rem; }
+      .brand-copy span { display: none; }
+      .header-actions { gap: 0.35rem; }
+      .chip.status { max-width: 9.2rem; white-space: normal; }
+      .chip.revision-chip { display: none; }
+      .quiet-button { padding-inline: 0.5rem; }
+      .title-card { padding: 5.2rem 1.15rem 2.8rem; }
+      h1 { font-size: clamp(2.55rem, 13vw, 4.1rem); }
+      .recommendation { margin: 0 1rem 2.5rem; grid-template-columns: 1fr; }
+      .recommendation-label { border-right: 0; border-bottom: 1px solid #4b586c; }
+      .direction-rail {
+        top: auto;
+        bottom: auto;
+        width: 100%;
+        height: 3.6rem;
+        flex-direction: row;
+        justify-content: flex-start;
+        gap: 0.35rem;
+        padding: 0.45rem 0.75rem;
+        border: 0;
+        border-bottom: 1px solid var(--line);
+        overflow-x: auto;
+        background: rgba(8, 10, 15, 0.97);
+      }
+      .direction-rail a { flex: 0 0 auto; display: flex; min-height: 2.6rem; align-items: center; padding: 0.55rem 0.7rem; }
+      .direction-rail a span { display: none; }
+      .rail-note { display: none; }
+      .stage-stack { margin-left: 0; }
+      .stage { min-height: auto; padding: 4rem 1rem; }
+      .stage h2 { font-size: clamp(2.5rem, 14vw, 4rem); overflow-wrap: anywhere; }
+      .fact-grid, .tradeoff { grid-template-columns: 1fr; }
+      .fact { min-height: auto; }
+      .ledger-head { grid-template-columns: 1fr; }
+      .ledger-number { display: none; }
+      .film-strip { grid-template-columns: 1fr 1fr; }
+      .orbit-scene { min-height: 23rem; }
+      .console-grid { grid-template-columns: 1fr; }
+      .console-cell { min-height: 7rem; }
+      .review-desk { left: 0; }
+      .desk-bar { min-height: var(--dock); padding: 0.65rem 0.85rem; }
+      .desk-actions .primary-button { display: none; }
+      .desk-grid { grid-template-columns: 1fr; gap: 0.8rem; padding: 1rem 0.9rem 1.4rem; }
+      .desk-panel { max-height: calc(100svh - var(--dock)); }
+      footer { margin-left: 0; padding: 2.5rem 1.15rem 4rem; }
+      .footer-grid { grid-template-columns: 1fr; gap: 1.2rem; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      :root { scroll-behavior: auto; }
+      *, *::before, *::after { scroll-behavior: auto !important; animation-duration: 0.001ms !important; animation-iteration-count: 1 !important; transition-duration: 0.001ms !important; }
+      .orbit-assembly, .ticker-track { animation: none !important; }
+    }
+
+    html[data-motion="off"] { scroll-behavior: auto; }
+    html[data-motion="off"] *, html[data-motion="off"] *::before, html[data-motion="off"] *::after { animation: none !important; transition-duration: 0.001ms !important; scroll-behavior: auto !important; }
+
+    @media print {
+      .direction-rail, .review-desk, .skip-link { display: none; }
+      body { padding: 0; }
+      .stage-stack, footer { margin-left: 0; }
+      .stage { break-inside: avoid; min-height: auto; }
+    }
+  </style>
+</head>
+<body>
+  <a class="skip-link" href="#review-desk">Skip to review desk</a>
+
+  <header class="mission-header">
+    <div class="brand" aria-label="Studio Decision Inbox">
+      <div class="brand-mark" aria-hidden="true">MC</div>
+      <div class="brand-copy"><strong>STUDIO</strong><span>DECISION INBOX</span></div>
+    </div>
+    <div class="header-actions">
+      <span class="chip status"><span class="status-dot" aria-hidden="true"></span>Blocked · awaiting review</span>
+      <span class="chip revision-chip">DEC-001/r1</span>
+      <button class="quiet-button" id="motion-toggle" type="button" aria-pressed="false">Motion: auto</button>
+    </div>
+  </header>
+
+  <nav class="direction-rail" aria-label="Directions">
+    <a href="#orbital" data-stage-link="orbital"><span>01</span>Orbital Command</a>
+    <a href="#ledger" data-stage-link="ledger"><span>02</span>Cinematic Ledger</a>
+    <a href="#signal" data-stage-link="signal"><span>03</span>Signal Room</a>
+    <p class="rail-note">Same brief · three live treatments</p>
+  </nav>
+
+  <main>
+    <section class="title-card" aria-labelledby="decision-question">
+      <p class="eyebrow">DEC-001 · One blocking question</p>
+      <h1 id="decision-question">Which direction becomes the Studio’s first Decision Inbox?</h1>
+      <p class="title-lede">Screen three working visual systems against the same evidence, then commission one direction. Your draft stays on this device until you export a revision-bound receipt and submit it to Linear.</p>
+    </section>
+
+    <aside class="recommendation" aria-label="House recommendation">
+      <div class="recommendation-label">House recommendation<br>02 / Ledger</div>
+      <div class="recommendation-copy">
+        <strong>Cinematic Ledger</strong>
+        <p>The Decision Inbox’s first job is to make evidence legible and judgment deliberate. Ledger makes evidence the hero while the film-strip language keeps the experience cinematic; Orbital focus can return later as an overview mode.</p>
+      </div>
+    </aside>
+
+    <div class="stage-stack">
+      <p id="selection-help" class="sr-only">Choose exactly one direction. With a radio focused, use arrow keys to move between choices.</p>
+
+      <section class="stage orbital" id="orbital" aria-labelledby="orbital-title" data-stage="orbital">
+        <div class="stage-inner">
+          <p class="stage-kicker">Direction 01 · Spatial systems map</p>
+          <h2 id="orbital-title">Orbital Command</h2>
+          <p class="thesis">Turn a blocking decision into the gravitational center of a living mission system.</p>
+
+          <div class="vignette orbit-scene" aria-label="Radial map placing the blocking decision at the center of evidence and candidate directions">
+            <svg class="orbit-svg" viewBox="0 0 1000 560" preserveAspectRatio="none" aria-hidden="true">
+              <line x1="500" y1="0" x2="500" y2="560"></line><line x1="0" y1="280" x2="1000" y2="280"></line>
+              <circle cx="32" cy="44" r="1.4"></circle><circle cx="87" cy="154" r="1"></circle><circle cx="138" cy="72" r="1.8"></circle><circle cx="184" cy="232" r="1"></circle>
+              <circle cx="229" cy="111" r="1.2"></circle><circle cx="273" cy="311" r="1.6"></circle><circle cx="317" cy="46" r="1"></circle><circle cx="362" cy="189" r="1.4"></circle>
+              <circle cx="411" cy="97" r="1"></circle><circle cx="454" cy="247" r="1.7"></circle><circle cx="548" cy="92" r="1.2"></circle><circle cx="596" cy="204" r="1"></circle>
+              <circle cx="643" cy="55" r="1.5"></circle><circle cx="687" cy="265" r="1.1"></circle><circle cx="731" cy="119" r="1.7"></circle><circle cx="779" cy="219" r="1"></circle>
+              <circle cx="824" cy="83" r="1.3"></circle><circle cx="872" cy="174" r="1"></circle><circle cx="918" cy="51" r="1.7"></circle><circle cx="967" cy="241" r="1.2"></circle>
+              <circle cx="54" cy="362" r="1"></circle><circle cx="101" cy="511" r="1.5"></circle><circle cx="149" cy="413" r="1.1"></circle><circle cx="196" cy="539" r="1.7"></circle>
+              <circle cx="241" cy="387" r="1.3"></circle><circle cx="288" cy="494" r="1"></circle><circle cx="334" cy="349" r="1.6"></circle><circle cx="379" cy="522" r="1.1"></circle>
+              <circle cx="424" cy="397" r="1.5"></circle><circle cx="471" cy="476" r="1"></circle><circle cx="529" cy="371" r="1.7"></circle><circle cx="576" cy="531" r="1.1"></circle>
+              <circle cx="621" cy="422" r="1.4"></circle><circle cx="669" cy="498" r="1"></circle><circle cx="714" cy="351" r="1.6"></circle><circle cx="761" cy="526" r="1.2"></circle>
+              <circle cx="807" cy="399" r="1"></circle><circle cx="853" cy="487" r="1.7"></circle><circle cx="902" cy="336" r="1.2"></circle><circle class="accent-star" cx="954" cy="517" r="2"></circle>
+            </svg>
+            <div class="orbit-assembly" aria-hidden="true">
+              <div class="orbit-ring" style="--inset: 3%"></div>
+              <div class="orbit-ring" style="--inset: 16%"></div>
+              <div class="orbit-ring" style="--inset: 29%"></div>
+            </div>
+            <div class="orbit-core"><div><span>Blocking object · DEC-001</span><strong>Commission one visual direction</strong></div></div>
+          </div>
+
+          <dl class="fact-grid" aria-label="Orbital Command assessment">
+            <div class="fact"><dt>Risk</dt><dd><strong>Medium–high</strong>The spatial metaphor fights scanability beyond roughly seven concurrent decisions.</dd></div>
+            <div class="fact"><dt>Cost</dt><dd><strong>High</strong>About 3–4 days to reach production-level spatial polish.</dd></div>
+            <div class="fact"><dt>Reversibility</dt><dd><strong>High</strong>The radial overview can be isolated or retired without changing the decision model.</dd></div>
+          </dl>
+
+          <div class="evidence" aria-label="Orbital Command evidence">
+            <details><summary>Evidence 01 · Required mission-control register</summary><p>The brief asks for cinematic Mission Control rather than a generic AI dashboard. Orbital is the strongest literal expression of that requirement. <a href="https://github.com/davidborka/agentic-engineering-studio/blob/1fce9225883d13378eea4cdbc240b788daef84e3/docs/decision-001-brief.md" target="_blank" rel="noopener">Open the revision-bound brief</a>.</p></details>
+            <details><summary>Evidence 02 · Authority and handoff</summary><p>The prototype can stage review, but it cannot approve itself or write to Linear. The exported receipt must be pasted into the assigned issue by the reviewer. <a href="https://github.com/davidborka/agentic-engineering-studio/blob/1fce9225883d13378eea4cdbc240b788daef84e3/docs/specs/2026-07-18-agentic-engineering-studio-product-constitution-v1.md" target="_blank" rel="noopener">Open the constitution at the source revision</a>.</p></details>
+          </div>
+
+          <div class="tradeoff">
+            <p><strong>Choose this if</strong>Spatial orientation and a singular sense of mission matter more than rapid scanning.</p>
+            <p><strong>You give up</strong>The calmest long-form reading surface and the lowest production cost.</p>
+          </div>
+          <label class="commission" for="choice-orbital">
+            <input id="choice-orbital" type="radio" name="direction" value="orbital-command" data-name="Orbital Command" aria-labelledby="choice-orbital-label decision-question orbital-title" aria-describedby="selection-help">
+            <span class="radio-mark" aria-hidden="true"></span>
+            <span id="choice-orbital-label">Commission Orbital Command</span>
+          </label>
+        </div>
+      </section>
+
+      <section class="stage ledger" id="ledger" aria-labelledby="ledger-title" data-stage="ledger">
+        <div class="stage-inner">
+          <div class="ledger-head">
+            <div>
+              <p class="stage-kicker">Direction 02 · Editorial evidence system</p>
+              <h2 id="ledger-title">Cinematic Ledger</h2>
+              <p class="thesis">Frame evidence like a film dossier: sequential, tactile, and built for considered judgment.</p>
+            </div>
+            <div class="ledger-number" aria-hidden="true">02</div>
+          </div>
+
+          <div class="vignette film-strip" aria-label="Film-strip timeline of Decision 001">
+            <div class="film-frame"><span>Scene 01 · Draft</span><strong>Question framed</strong></div>
+            <div class="film-frame"><span>Scene 02 · Basis</span><strong>Constitution adopted</strong></div>
+            <div class="film-frame"><span>Scene 03 · Brief</span><strong>Three directions issued</strong></div>
+            <div class="film-frame"><span>Scene 04 · Gate</span><strong>Review blocked</strong></div>
+          </div>
+
+          <dl class="fact-grid" aria-label="Cinematic Ledger assessment">
+            <div class="fact"><dt>Risk</dt><dd><strong>Medium</strong>The editorial language can drift toward magazine styling at higher density.</dd></div>
+            <div class="fact"><dt>Cost</dt><dd><strong>Medium</strong>About 2–3 days to formalize the production design system.</dd></div>
+            <div class="fact"><dt>Reversibility</dt><dd><strong>High</strong>The ruled evidence pattern maps cleanly back to conventional document layouts.</dd></div>
+          </dl>
+
+          <div class="evidence" aria-label="Cinematic Ledger evidence">
+            <details><summary>Evidence 01 · Required mission-control register</summary><p>The brief asks for cinematic Mission Control rather than a generic AI dashboard. Ledger creates cinema through pacing, typography, and the film-strip history. <a href="https://github.com/davidborka/agentic-engineering-studio/blob/1fce9225883d13378eea4cdbc240b788daef84e3/docs/decision-001-brief.md" target="_blank" rel="noopener">Open the revision-bound brief</a>.</p></details>
+            <details><summary>Evidence 02 · Authority and handoff</summary><p>The prototype can stage review, but it cannot approve itself or write to Linear. The exported receipt must be pasted into the assigned issue by the reviewer. <a href="https://github.com/davidborka/agentic-engineering-studio/blob/1fce9225883d13378eea4cdbc240b788daef84e3/docs/specs/2026-07-18-agentic-engineering-studio-product-constitution-v1.md" target="_blank" rel="noopener">Open the constitution at the source revision</a>.</p></details>
+          </div>
+
+          <div class="tradeoff">
+            <p><strong>Choose this if</strong>Evidence reading and a deliberate act of judgment are the primary experience.</p>
+            <p><strong>You give up</strong>The strongest live-system metaphor and the most compact operational density.</p>
+          </div>
+          <label class="commission" for="choice-ledger">
+            <input id="choice-ledger" type="radio" name="direction" value="cinematic-ledger" data-name="Cinematic Ledger" aria-labelledby="choice-ledger-label decision-question ledger-title" aria-describedby="selection-help">
+            <span class="radio-mark" aria-hidden="true"></span>
+            <span id="choice-ledger-label">Commission Cinematic Ledger</span>
+          </label>
+        </div>
+      </section>
+
+      <section class="stage signal" id="signal" aria-labelledby="signal-title" data-stage="signal">
+        <div class="stage-inner">
+          <p class="stage-kicker">Direction 03 · Operational signal grid</p>
+          <h2 id="signal-title">Signal Room</h2>
+          <p class="thesis">Compress the decision into a disciplined field of alerts, telemetry, and operator action.</p>
+
+          <div class="vignette signal-console" aria-label="Operational console summarizing the Decision 001 state">
+            <div class="telemetry" tabindex="0" aria-label="Decision telemetry. Animation pauses while focused.">
+              <span class="telemetry-label">Live</span>
+              <div class="ticker-window"><div class="ticker-track">DEC-001 / BLOCKED / REVIEWER DAVID / 3 DIRECTIONS / 1 REQUIRED SELECTION / LOCAL DRAFT / NO DIRECT WRITEBACK&nbsp;&nbsp;&nbsp; DEC-001 / BLOCKED / REVIEWER DAVID / 3 DIRECTIONS / 1 REQUIRED SELECTION / LOCAL DRAFT / NO DIRECT WRITEBACK&nbsp;&nbsp;&nbsp;</div></div>
+            </div>
+            <div class="console-grid">
+              <div class="console-cell"><span><i class="led" aria-hidden="true"></i> Gate status</span><strong>AWAITING REVIEW</strong></div>
+              <div class="console-cell"><span><i class="led" aria-hidden="true"></i> Candidate count</span><strong>03 / LIVE</strong></div>
+              <div class="console-cell"><span><i class="led" aria-hidden="true"></i> Authority</span><strong>LINEAR NEO-119</strong></div>
+            </div>
+          </div>
+
+          <dl class="fact-grid" aria-label="Signal Room assessment">
+            <div class="fact"><dt>Risk</dt><dd><strong>Medium</strong>It sits nearest the forbidden generic-dashboard pattern and needs firm art direction.</dd></div>
+            <div class="fact"><dt>Cost</dt><dd><strong>Low–medium</strong>About 1–2 days to turn the grid into a reusable production surface.</dd></div>
+            <div class="fact"><dt>Reversibility</dt><dd><strong>High</strong>Compact cards and status tokens transfer easily to another visual shell.</dd></div>
+          </dl>
+
+          <div class="evidence" aria-label="Signal Room evidence">
+            <details><summary>Evidence 01 · Required mission-control register</summary><p>The brief asks for cinematic Mission Control rather than a generic AI dashboard. Signal Room earns the mission register through restraint, operational typography, and hard-edged telemetry. <a href="https://github.com/davidborka/agentic-engineering-studio/blob/1fce9225883d13378eea4cdbc240b788daef84e3/docs/decision-001-brief.md" target="_blank" rel="noopener">Open the revision-bound brief</a>.</p></details>
+            <details><summary>Evidence 02 · Authority and handoff</summary><p>The prototype can stage review, but it cannot approve itself or write to Linear. The exported receipt must be pasted into the assigned issue by the reviewer. <a href="https://github.com/davidborka/agentic-engineering-studio/blob/1fce9225883d13378eea4cdbc240b788daef84e3/docs/specs/2026-07-18-agentic-engineering-studio-product-constitution-v1.md" target="_blank" rel="noopener">Open the constitution at the source revision</a>.</p></details>
+          </div>
+
+          <div class="tradeoff">
+            <p><strong>Choose this if</strong>Fast scanning, compact state, and operator throughput outweigh narrative pacing.</p>
+            <p><strong>You give up</strong>The most distinctive break from dashboard conventions and the richest reading mode.</p>
+          </div>
+          <label class="commission" for="choice-signal">
+            <input id="choice-signal" type="radio" name="direction" value="signal-room" data-name="Signal Room" aria-labelledby="choice-signal-label decision-question signal-title" aria-describedby="selection-help">
+            <span class="radio-mark" aria-hidden="true"></span>
+            <span id="choice-signal-label">Commission Signal Room</span>
+          </label>
+        </div>
+      </section>
+    </div>
+  </main>
+
+  <footer>
+    <div class="footer-grid">
+      <div>
+        <h2>Artifact identity</h2>
+        <p><code>prototypes/decision-001/index.html</code></p>
+        <p>Prototype revision <strong>DEC-001/r1</strong></p>
+        <p>Source basis <code>1fce9225883d13378eea4cdbc240b788daef84e3</code></p>
+        <p class="disposable">Disposable Phase 0 prototype · not production authority</p>
+      </div>
+      <div>
+        <h2>Decision authority</h2>
+        <p><a href="https://linear.app/neoduck/issue/NEO-119/decision-001-choose-the-studio-decision-inbox-visual-direction" target="_blank" rel="noopener">Linear NEO-119 · assigned to David Borka</a></p>
+        <p>No credential or direct Linear write-back exists in this page.</p>
+      </div>
+      <div>
+        <h2>Repository evidence</h2>
+        <p><a href="https://github.com/davidborka/agentic-engineering-studio" target="_blank" rel="noopener">Repository</a></p>
+        <p><a href="https://github.com/davidborka/agentic-engineering-studio/blob/1fce9225883d13378eea4cdbc240b788daef84e3/docs/decision-001-brief.md" target="_blank" rel="noopener">Decision brief · source revision</a></p>
+      </div>
+    </div>
+  </footer>
+
+  <aside class="review-desk" id="review-desk" tabindex="-1" aria-label="Review desk">
+    <div class="desk-bar">
+      <div class="desk-readout" aria-live="polite">
+        <span>Current decision</span>
+        <strong id="selection-readout">No direction selected</strong>
+      </div>
+      <div class="desk-actions">
+        <button class="primary-button" id="bar-generate" type="button">Generate receipt</button>
+        <button class="secondary-button" id="desk-toggle" type="button" aria-expanded="false" aria-controls="desk-panel">Open review desk</button>
+      </div>
+    </div>
+    <div class="desk-panel" id="desk-panel" hidden>
+      <div class="desk-grid">
+        <div>
+          <div class="stale-banner" id="stale-banner" hidden>
+            <p>A local draft belongs to another prototype revision. Keep its reviewer/comment, or discard it.</p>
+            <div class="stale-actions">
+              <button class="secondary-button" id="keep-stale" type="button">Keep text</button>
+              <button class="secondary-button" id="discard-stale" type="button">Discard</button>
+            </div>
+          </div>
+          <div class="field">
+            <label for="reviewer">Reviewer</label>
+            <input id="reviewer" type="text" value="David" autocomplete="name">
+          </div>
+          <div class="field">
+            <label for="comment">Reviewer comment</label>
+            <textarea id="comment" placeholder="What should the build preserve, change, or prove next?"></textarea>
+            <small>Saved locally as you type. Keep sensitive or production data out of this disposable prototype.</small>
+          </div>
+          <output class="draft-status" id="draft-status" aria-live="polite">Draft ready · stored only on this device</output>
+        </div>
+
+        <div class="receipt-column">
+          <p class="selection-error" id="selection-error" role="alert"></p>
+          <button class="primary-button" id="generate-receipt" type="button">Generate revision-bound receipt</button>
+          <div class="receipt-buttons">
+            <button class="secondary-button" id="download-json" type="button" disabled>Download JSON</button>
+            <button class="secondary-button" id="download-markdown" type="button" disabled>Download Markdown</button>
+            <button class="secondary-button" id="copy-markdown" type="button" disabled>Copy Markdown</button>
+            <a class="secondary-button" href="https://linear.app/neoduck/issue/NEO-119/decision-001-choose-the-studio-decision-inbox-visual-direction" target="_blank" rel="noopener">Open Linear issue</a>
+          </div>
+          <pre class="receipt-preview" id="receipt-preview" aria-label="Receipt preview">Select a direction, add your comment, then generate a receipt.</pre>
+          <div class="copy-fallback" id="copy-fallback" hidden>
+            <p>Automatic clipboard access is unavailable. Copy the selected Markdown below.</p>
+            <textarea id="fallback-text" readonly aria-label="Markdown receipt to copy manually"></textarea>
+          </div>
+          <p class="handoff">Authoritative handoff: 1 · Generate and copy the receipt &nbsp; 2 · Open Linear NEO-119 &nbsp; 3 · Paste as a comment and resolve there.</p>
+          <p class="microcopy">SHA-256 covers the canonical receipt payload, including <code>DEC-001/r1</code>, artifact path, and source-basis commit. Changing review content changes the checksum.</p>
+        </div>
+      </div>
+    </div>
+  </aside>
+
+  <script>
+    (function () {
+      'use strict';
+
+      var DECISION_ID = 'DEC-001';
+      var QUESTION = 'Which visual and interaction direction should become the Studio\'s first Decision Inbox experience?';
+      var PROTOTYPE_REVISION = 'DEC-001/r1';
+      var SOURCE_BASIS_COMMIT = '1fce9225883d13378eea4cdbc240b788daef84e3';
+      var ARTIFACT_PATH = 'prototypes/decision-001/index.html';
+      var RECOMMENDATION = 'cinematic-ledger';
+      var STORAGE_KEY = 'studio.dec-001.draft';
+      var selection = null;
+      var receipt = null;
+      var receiptMarkdown = '';
+      var saveTimer = null;
+      var staleDraft = null;
+
+      var root = document.documentElement;
+      var radios = Array.prototype.slice.call(document.querySelectorAll('input[name="direction"]'));
+      var reviewer = document.getElementById('reviewer');
+      var comment = document.getElementById('comment');
+      var draftStatus = document.getElementById('draft-status');
+      var selectionReadout = document.getElementById('selection-readout');
+      var selectionError = document.getElementById('selection-error');
+      var deskToggle = document.getElementById('desk-toggle');
+      var deskPanel = document.getElementById('desk-panel');
+      var receiptPreview = document.getElementById('receipt-preview');
+      var motionToggle = document.getElementById('motion-toggle');
+      var staleBanner = document.getElementById('stale-banner');
+      var fallback = document.getElementById('copy-fallback');
+      var fallbackText = document.getElementById('fallback-text');
+      var receiptButtons = [document.getElementById('download-json'), document.getElementById('download-markdown'), document.getElementById('copy-markdown')];
+
+      function setDesk(open) {
+        deskPanel.hidden = !open;
+        deskToggle.setAttribute('aria-expanded', String(open));
+        deskToggle.textContent = open ? 'Close review desk' : 'Open review desk';
+      }
+
+      function selectedRadio() {
+        return radios.find(function (radio) { return radio.checked; }) || null;
+      }
+
+      function invalidateReceipt(message) {
+        if (!receipt && !receiptMarkdown) return;
+        receipt = null;
+        receiptMarkdown = '';
+        receiptButtons.forEach(function (button) { button.disabled = true; });
+        receiptPreview.textContent = message;
+        fallback.hidden = true;
+      }
+
+      function updateSelection() {
+        var radio = selectedRadio();
+        selection = radio ? { id: radio.value, name: radio.dataset.name } : null;
+        if (!selection) {
+          selectionReadout.textContent = 'No direction selected';
+          return;
+        }
+        var relation = selection.id === RECOMMENDATION ? 'matches recommendation' : 'deviates from Cinematic Ledger recommendation';
+        selectionReadout.textContent = selection.name + ' · ' + relation;
+        selectionError.textContent = '';
+        invalidateReceipt('Selection changed. Generate a new revision-bound receipt.');
+      }
+
+      function draftPayload() {
+        return {
+          schema: 'studio.decision-draft/1',
+          decisionId: DECISION_ID,
+          revision: PROTOTYPE_REVISION,
+          selection: selectedRadio() ? selectedRadio().value : null,
+          reviewer: reviewer.value.trim(),
+          comment: comment.value,
+          motion: root.dataset.motion,
+          updatedAt: new Date().toISOString()
+        };
+      }
+
+      function saveDraft() {
+        clearTimeout(saveTimer);
+        try {
+          var draft = draftPayload();
+          localStorage.setItem(STORAGE_KEY, JSON.stringify(draft));
+          var time = new Date(draft.updatedAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+          draftStatus.classList.remove('error');
+          draftStatus.textContent = 'Draft saved locally · ' + time;
+        } catch (error) {
+          draftStatus.classList.add('error');
+          draftStatus.textContent = 'Draft not persisted — export before closing.';
+        }
+      }
+
+      function queueSave() {
+        clearTimeout(saveTimer);
+        draftStatus.textContent = 'Saving local draft…';
+        saveTimer = setTimeout(saveDraft, 400);
+      }
+
+      function reviewContentChanged() {
+        invalidateReceipt('Review text changed. Generate a new revision-bound receipt.');
+        queueSave();
+      }
+
+      function applyDraft(draft, includeSelection) {
+        reviewer.value = typeof draft.reviewer === 'string' ? draft.reviewer : 'David';
+        comment.value = typeof draft.comment === 'string' ? draft.comment : '';
+        if (draft.motion === 'off') setMotion('off', false);
+        if (includeSelection && draft.selection) {
+          var radio = radios.find(function (item) { return item.value === draft.selection; });
+          if (radio) radio.checked = true;
+        }
+        updateSelection();
+      }
+
+      function loadDraft() {
+        try {
+          var raw = localStorage.getItem(STORAGE_KEY);
+          if (!raw) return;
+          var draft = JSON.parse(raw);
+          if (!draft || draft.decisionId !== DECISION_ID) return;
+          if (draft.revision !== PROTOTYPE_REVISION) {
+            staleDraft = draft;
+            staleBanner.hidden = false;
+            setDesk(true);
+            return;
+          }
+          applyDraft(draft, true);
+          draftStatus.textContent = 'Local draft restored · ' + new Date(draft.updatedAt).toLocaleString();
+        } catch (error) {
+          draftStatus.classList.add('error');
+          draftStatus.textContent = 'Stored draft could not be read. A fresh draft is active.';
+        }
+      }
+
+      function setMotion(mode, persist) {
+        root.dataset.motion = mode;
+        var off = mode === 'off';
+        motionToggle.setAttribute('aria-pressed', String(off));
+        motionToggle.textContent = off ? 'Motion: off' : 'Motion: auto';
+        if (persist !== false) queueSave();
+      }
+
+      function stablePayload() {
+        return {
+          schema: 'studio.review-receipt/1',
+          decisionId: DECISION_ID,
+          question: QUESTION,
+          prototypeRevision: PROTOTYPE_REVISION,
+          artifact: ARTIFACT_PATH,
+          sourceBasisCommit: SOURCE_BASIS_COMMIT,
+          linearIssue: 'NEO-119',
+          selection: { id: selection.id, name: selection.name },
+          recommendation: RECOMMENDATION,
+          deviatesFromRecommendation: selection.id !== RECOMMENDATION,
+          reviewer: reviewer.value.trim() || 'David',
+          comment: comment.value.trim(),
+          reviewedAt: new Date().toISOString()
+        };
+      }
+
+      function hex(buffer) {
+        return Array.prototype.map.call(new Uint8Array(buffer), function (byte) { return byte.toString(16).padStart(2, '0'); }).join('');
+      }
+
+      function markdownFor(data) {
+        var commentLines = data.comment ? data.comment.split(/\r?\n/).map(function (line) { return '> ' + line; }).join('\n') : '> No reviewer comment supplied.';
+        return [
+          '# ' + data.decisionId + ' review receipt',
+          '',
+          '- **Decision:** ' + data.question,
+          '- **Selection:** ' + data.selection.name + ' (`' + data.selection.id + '`)',
+          '- **Recommendation:** Cinematic Ledger (`' + data.recommendation + '`)',
+          '- **Deviation:** ' + (data.deviatesFromRecommendation ? 'Yes' : 'No'),
+          '- **Reviewer:** ' + data.reviewer,
+          '- **Reviewed at:** ' + data.reviewedAt,
+          '- **Prototype revision:** `' + data.prototypeRevision + '`',
+          '- **Artifact:** `' + data.artifact + '`',
+          '- **Source basis commit:** `' + data.sourceBasisCommit + '`',
+          '- **Linear issue:** ' + data.linearIssue,
+          '- **Checksum:** `' + data.checksum + '`',
+          '',
+          '## Reviewer comment',
+          '',
+          commentLines,
+          '',
+          '_Generated locally. Submit this receipt to Linear NEO-119 for authoritative review._',
+          ''
+        ].join('\n');
+      }
+
+      async function generateReceipt() {
+        updateSelection();
+        if (!selection) {
+          selectionError.textContent = 'Select one direction before generating a receipt.';
+          setDesk(true);
+          radios[0].focus();
+          return;
+        }
+        selectionError.textContent = '';
+        var payload = stablePayload();
+        var canonical = JSON.stringify(payload);
+        if (window.crypto && window.crypto.subtle) {
+          var digest = await window.crypto.subtle.digest('SHA-256', new TextEncoder().encode(canonical));
+          payload.checksum = 'sha256:' + hex(digest);
+        } else {
+          payload.checksum = 'unavailable';
+        }
+        receipt = payload;
+        receiptMarkdown = markdownFor(receipt);
+        receiptPreview.textContent = JSON.stringify(receipt, null, 2);
+        receiptButtons.forEach(function (button) { button.disabled = false; });
+        fallback.hidden = true;
+        saveDraft();
+      }
+
+      function download(text, mime, extension) {
+        var blob = new Blob([text], { type: mime + ';charset=utf-8' });
+        var url = URL.createObjectURL(blob);
+        var anchor = document.createElement('a');
+        anchor.href = url;
+        anchor.download = 'DEC-001-receipt-r1.' + extension;
+        document.body.appendChild(anchor);
+        anchor.click();
+        anchor.remove();
+        setTimeout(function () { URL.revokeObjectURL(url); }, 0);
+      }
+
+      function showCopyFallback() {
+        fallbackText.value = receiptMarkdown;
+        fallback.hidden = false;
+        fallbackText.focus();
+        fallbackText.select();
+        draftStatus.textContent = 'Clipboard unavailable · receipt selected for manual copy';
+      }
+
+      async function copyMarkdown() {
+        if (!receiptMarkdown) return;
+        try {
+          if (!navigator.clipboard || !navigator.clipboard.writeText) throw new Error('Clipboard API unavailable');
+          await navigator.clipboard.writeText(receiptMarkdown);
+          draftStatus.textContent = 'Markdown receipt copied';
+        } catch (error) {
+          try {
+            fallbackText.value = receiptMarkdown;
+            fallback.hidden = false;
+            fallbackText.focus();
+            fallbackText.select();
+            if (!document.execCommand || !document.execCommand('copy')) throw new Error('Legacy copy unavailable');
+            fallback.hidden = true;
+            draftStatus.textContent = 'Markdown receipt copied';
+          } catch (fallbackError) {
+            showCopyFallback();
+          }
+        }
+      }
+
+      radios.forEach(function (radio) {
+        radio.addEventListener('change', function () { updateSelection(); queueSave(); });
+      });
+      reviewer.addEventListener('input', reviewContentChanged);
+      comment.addEventListener('input', reviewContentChanged);
+      motionToggle.addEventListener('click', function () { setMotion(root.dataset.motion === 'off' ? 'auto' : 'off'); });
+      deskToggle.addEventListener('click', function () { setDesk(deskPanel.hidden); });
+      document.getElementById('bar-generate').addEventListener('click', function () { setDesk(true); generateReceipt(); });
+      document.getElementById('generate-receipt').addEventListener('click', generateReceipt);
+      document.getElementById('download-json').addEventListener('click', function () { if (receipt) download(JSON.stringify(receipt, null, 2) + '\n', 'application/json', 'json'); });
+      document.getElementById('download-markdown').addEventListener('click', function () { if (receiptMarkdown) download(receiptMarkdown, 'text/markdown', 'md'); });
+      document.getElementById('copy-markdown').addEventListener('click', copyMarkdown);
+      document.getElementById('keep-stale').addEventListener('click', function () { if (staleDraft) applyDraft(staleDraft, false); staleBanner.hidden = true; staleDraft = null; saveDraft(); });
+      document.getElementById('discard-stale').addEventListener('click', function () { staleBanner.hidden = true; staleDraft = null; try { localStorage.removeItem(STORAGE_KEY); } catch (error) {} saveDraft(); });
+
+      window.addEventListener('pagehide', saveDraft);
+      document.addEventListener('visibilitychange', function () { if (document.visibilityState === 'hidden') saveDraft(); });
+
+      if ('IntersectionObserver' in window) {
+        var links = Array.prototype.slice.call(document.querySelectorAll('[data-stage-link]'));
+        var observer = new IntersectionObserver(function (entries) {
+          entries.forEach(function (entry) {
+            if (!entry.isIntersecting) return;
+            links.forEach(function (link) { link.removeAttribute('aria-current'); });
+            var active = links.find(function (link) { return link.dataset.stageLink === entry.target.dataset.stage; });
+            if (active) active.setAttribute('aria-current', 'true');
+          });
+        }, { rootMargin: '-35% 0px -55% 0px', threshold: 0 });
+        document.querySelectorAll('[data-stage]').forEach(function (stage) { observer.observe(stage); });
+      }
+
+      loadDraft();
+      updateSelection();
+    }());
+  </script>
+</body>
+</html>
