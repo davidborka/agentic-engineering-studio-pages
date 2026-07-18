@@ -13,10 +13,12 @@
     p { color: #a8b1c2; line-height: 1.65; }
     h1 { max-width: 13ch; font-size: clamp(3rem, 9vw, 7.5rem); line-height: .85; letter-spacing: -.07em; margin: 0 0 2rem; }
     .eyebrow { font: 700 .75rem/1 ui-monospace, monospace; color: #8ee7ff; letter-spacing: .16em; text-transform: uppercase; }
+    .reviews { display: grid; gap: 1rem; }
     .card { display: grid; gap: 1rem; padding: 1.5rem; border: 1px solid #30394a; border-radius: 1rem; background: #111620; }
     .card h2 { margin: 0; }
     .card a { width: fit-content; padding: .8rem 1rem; border-radius: .45rem; color: #02141a; background: #8ee7ff; font-weight: 800; text-decoration: none; }
     .meta { font: .75rem/1.4 ui-monospace, monospace; }
+    .ready { color: #8bf0bb; }
     :focus-visible { outline: 2px solid #fff1a8; outline-offset: 3px; }
   </style>
 </head>
@@ -24,12 +26,20 @@
   <main>
     <p class="eyebrow">Studio · Visual review index</p>
     <h1>Cinematix Mission Control</h1>
-    <section class="card" aria-labelledby="decision-001">
-      <p class="meta">DEC-001 · ASSIGNED TO DAVID · REVISION R1</p>
-      <h2 id="decision-001">Choose the first Decision Inbox direction</h2>
-      <p>Compare three live UI/UX directions using identical evidence, record your local review, export a signed receipt, and complete the authoritative review in Linear.</p>
-      <a href="./decision-001/">Open interactive visual review</a>
-    </section>
+    <div class="reviews">
+      <section class="card" aria-labelledby="decision-002">
+        <p class="meta ready">DEC-002 · READY FOR REVIEW · DAVID · REVISION R1</p>
+        <h2 id="decision-002">Choose Orbital Command’s board, status, and motion systems</h2>
+        <p>Compare nine live fixture-backed treatments across three independent decisions, inspect the secure-kernel and clean-room boundaries, then export a revision-bound receipt for Linear NEO-120.</p>
+        <a href="./decision-002/">Open DEC-002 visual review</a>
+      </section>
+      <section class="card" aria-labelledby="decision-001">
+        <p class="meta">DEC-001 · ACCEPTED · DAVID · REVISION R1</p>
+        <h2 id="decision-001">Choose the first Decision Inbox direction</h2>
+        <p>Compare three live UI/UX directions using identical evidence, record your local review, export a signed receipt, and complete the authoritative review in Linear.</p>
+        <a href="./decision-001/">Open DEC-001 visual review</a>
+      </section>
+    </div>
   </main>
 </body>
 </html>

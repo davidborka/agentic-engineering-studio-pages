@@ -1,0 +1,1184 @@
+<!doctype html>
+<!--
+  DISPOSABLE PHASE 0 VISUAL REVIEW — NOT PRODUCTION AUTHORITY.
+  Artifact revision: DEC-002/r1. Linear NEO-120 remains the decision authority.
+  This clean-room artifact was designed from repository research summaries only.
+-->
+<html lang="en" data-motion="auto">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="prototype-revision" content="DEC-002/r1">
+  <meta name="color-scheme" content="dark">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'unsafe-inline'; style-src 'unsafe-inline'; img-src 'self' data:; connect-src 'none'; font-src 'none'; object-src 'none'; base-uri 'none'; form-action 'none'">
+  <title>DEC-002 · Orbital Command systems review</title>
+  <style>
+    :root {
+      color-scheme: dark;
+      --void: #05080d;
+      --deck: #091019;
+      --deck-2: #0e1722;
+      --panel: #121e2b;
+      --panel-2: #162535;
+      --line: #3d5165;
+      --line-soft: #273a4c;
+      --text: #f1f7fb;
+      --muted: #a7b8c6;
+      --dim: #8297a8;
+      --cyan: #74ddf6;
+      --cyan-ink: #03212a;
+      --focus: #fff0a6;
+      --nominal: #6fe0aa;
+      --warning: #ffc66b;
+      --critical: #ff858c;
+      --standby: #9dafc0;
+      --lost: #c4a7e7;
+      --spend: #f2ca73;
+      --dock-h: 5rem;
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background: var(--void);
+      color: var(--text);
+      scroll-behavior: smooth;
+    }
+
+    * { box-sizing: border-box; }
+    html { min-width: 20rem; }
+    body {
+      margin: 0;
+      min-width: 20rem;
+      padding-bottom: calc(var(--dock-h) + 1rem);
+      background:
+        linear-gradient(rgba(116, 221, 246, 0.025) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(116, 221, 246, 0.025) 1px, transparent 1px),
+        radial-gradient(circle at 82% 6%, rgba(40, 127, 164, 0.16), transparent 29rem),
+        var(--void);
+      background-size: 3rem 3rem, 3rem 3rem, auto, auto;
+      line-height: 1.5;
+    }
+    button, input, textarea { font: inherit; }
+    button, a, input, textarea { -webkit-tap-highlight-color: transparent; }
+    button, a { min-height: 2.75rem; }
+    button { color: inherit; }
+    a { color: var(--cyan); text-underline-offset: 0.22em; }
+    a:hover { color: #c3f4ff; }
+    :focus-visible { outline: 3px solid var(--focus); outline-offset: 3px; }
+    ::selection { color: var(--cyan-ink); background: var(--cyan); }
+    [hidden] { display: none !important; }
+
+    .skip-link {
+      position: fixed;
+      z-index: 200;
+      top: 0.75rem;
+      left: 0.75rem;
+      padding: 0.7rem 1rem;
+      color: #111703;
+      background: var(--focus);
+      border-radius: 0.35rem;
+      transform: translateY(-180%);
+    }
+    .skip-link:focus { transform: translateY(0); }
+    .sr-only {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      padding: 0;
+      margin: -1px;
+      overflow: hidden;
+      clip: rect(0, 0, 0, 0);
+      white-space: nowrap;
+      border: 0;
+    }
+    .mono { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; }
+
+    .topbar {
+      position: sticky;
+      z-index: 50;
+      top: 0;
+      display: grid;
+      grid-template-columns: 1fr auto 1fr;
+      align-items: center;
+      min-height: 4.75rem;
+      padding: 0.65rem clamp(1rem, 3vw, 2.5rem);
+      border-bottom: 1px solid var(--line-soft);
+      background: rgba(5, 8, 13, 0.94);
+      backdrop-filter: blur(18px);
+    }
+    .brand { display: flex; align-items: center; gap: 0.75rem; min-width: 0; }
+    .brand-glyph {
+      position: relative;
+      width: 2.65rem;
+      height: 2.65rem;
+      flex: 0 0 auto;
+      border: 1px solid var(--cyan);
+      border-radius: 50%;
+    }
+    .brand-glyph::before, .brand-glyph::after { content: ""; position: absolute; border: 1px solid var(--line); border-radius: 50%; }
+    .brand-glyph::before { inset: 0.42rem; }
+    .brand-glyph::after { width: 0.42rem; height: 0.42rem; top: 0.13rem; right: 0.2rem; background: var(--cyan); box-shadow: 0 0 0.65rem var(--cyan); }
+    .brand-copy { min-width: 0; }
+    .brand-copy strong, .brand-copy span { display: block; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .brand-copy strong { font-size: 0.78rem; letter-spacing: 0.16em; }
+    .brand-copy span { color: var(--muted); font-size: 0.68rem; letter-spacing: 0.1em; }
+    .surface-tabs { display: flex; gap: 0.35rem; padding: 0.25rem; border: 1px solid var(--line-soft); border-radius: 999px; background: var(--deck); }
+    .surface-tab {
+      min-width: 7rem;
+      padding: 0.55rem 1rem;
+      border: 0;
+      border-radius: 999px;
+      color: var(--muted);
+      background: transparent;
+      cursor: pointer;
+      font-weight: 750;
+    }
+    .surface-tab[aria-selected="true"] { color: var(--cyan-ink); background: var(--cyan); }
+    .top-meta { display: flex; justify-content: flex-end; gap: 0.5rem; flex-wrap: wrap; }
+    .chip {
+      display: inline-flex;
+      align-items: center;
+      min-height: 2rem;
+      padding: 0.35rem 0.65rem;
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      color: var(--muted);
+      background: var(--deck);
+      font: 700 0.68rem/1.1 ui-monospace, monospace;
+      letter-spacing: 0.07em;
+      text-transform: uppercase;
+    }
+    .chip.pending { color: var(--warning); border-color: #82662f; }
+
+    .hero, .operate-hero {
+      width: min(92rem, calc(100% - 2rem));
+      margin: 0 auto;
+      padding: clamp(4rem, 9vw, 8rem) clamp(0rem, 4vw, 3rem) 3rem;
+    }
+    .eyebrow, .section-kicker {
+      margin: 0 0 0.8rem;
+      color: var(--cyan);
+      font: 750 0.72rem/1.3 ui-monospace, monospace;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+    }
+    h1 { max-width: 15ch; margin: 0; font-size: clamp(3rem, 7.5vw, 7.4rem); line-height: 0.88; letter-spacing: -0.065em; text-wrap: balance; }
+    .hero-lede { max-width: 55rem; margin: 1.5rem 0 0; color: var(--muted); font-size: clamp(1rem, 1.8vw, 1.28rem); }
+    .hero-meta { display: flex; flex-wrap: wrap; gap: 0.55rem; margin-top: 1.5rem; }
+
+    .compare-layout { width: min(92rem, calc(100% - 2rem)); margin: 0 auto; }
+    .recommendation-band {
+      display: grid;
+      grid-template-columns: minmax(12rem, 0.6fr) minmax(20rem, 1.4fr);
+      margin-bottom: 2rem;
+      border: 1px solid #45697b;
+      background: linear-gradient(115deg, #0d1822, #122635);
+      clip-path: polygon(0 0, calc(100% - 1.2rem) 0, 100% 1.2rem, 100% 100%, 1.2rem 100%, 0 calc(100% - 1.2rem));
+    }
+    .recommendation-band > div { padding: 1.4rem; }
+    .recommendation-band > div:first-child { border-right: 1px solid #45697b; color: var(--cyan); font: 750 0.75rem/1.6 ui-monospace, monospace; letter-spacing: 0.12em; text-transform: uppercase; }
+    .recommendation-band p { margin: 0; color: #c4d3de; }
+    .recommendation-band strong { display: block; margin-bottom: 0.35rem; color: var(--text); font-size: 1.08rem; }
+
+    .decision-card {
+      margin: 0 0 2rem;
+      border: 1px solid var(--line);
+      background: linear-gradient(145deg, rgba(18, 30, 43, 0.96), rgba(8, 15, 23, 0.98));
+      clip-path: polygon(0 0, calc(100% - 1.1rem) 0, 100% 1.1rem, 100% 100%, 0 100%);
+    }
+    .card-head {
+      display: grid;
+      grid-template-columns: 5.5rem minmax(0, 1fr) minmax(16rem, 0.75fr);
+      gap: 1rem;
+      align-items: start;
+      padding: 1.5rem;
+      border-bottom: 1px solid var(--line-soft);
+    }
+    .card-index { color: var(--cyan); font: 800 clamp(2.8rem, 6vw, 5.2rem)/0.8 ui-monospace, monospace; letter-spacing: -0.08em; }
+    .card-head h2 { margin: 0; font-size: clamp(1.7rem, 3vw, 2.8rem); line-height: 1; letter-spacing: -0.035em; }
+    .card-head p { margin: 0.7rem 0 0; color: var(--muted); }
+    .rationale { padding-left: 1rem; border-left: 2px solid var(--cyan); color: #c8d7e2; font-size: 0.9rem; }
+    .rationale strong { display: block; margin-bottom: 0.3rem; color: var(--cyan); font-size: 0.7rem; letter-spacing: 0.1em; text-transform: uppercase; }
+
+    fieldset { min-width: 0; margin: 0; padding: 0; border: 0; }
+    .option-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 1px; background: var(--line-soft); }
+    .option {
+      position: relative;
+      min-width: 0;
+      display: flex;
+      flex-direction: column;
+      gap: 0.85rem;
+      padding: 1rem;
+      color: var(--text);
+      background: #0c1520;
+      cursor: pointer;
+    }
+    .option:hover { background: #101d29; }
+    .option:has(input:checked) { z-index: 1; background: #102431; box-shadow: inset 0 0 0 2px var(--cyan); }
+    .option:has(input:focus-visible) { outline: 3px solid var(--focus); outline-offset: -5px; }
+    .option input { position: absolute; width: 1px; height: 1px; opacity: 0; pointer-events: none; }
+    .option-heading { min-height: 3.5rem; display: grid; grid-template-columns: 2.75rem 1fr auto; gap: 0.7rem; align-items: center; }
+    .radio-mark { width: 2.75rem; height: 2.75rem; display: grid; place-items: center; border: 1px solid var(--line); border-radius: 50%; color: var(--muted); font: 750 0.68rem/1 ui-monospace, monospace; }
+    .option:has(input:checked) .radio-mark { color: var(--cyan-ink); border-color: var(--cyan); background: var(--cyan); }
+    .option-title strong, .option-title span { display: block; }
+    .option-title strong { line-height: 1.15; }
+    .option-title span { margin-top: 0.25rem; color: var(--muted); font-size: 0.75rem; }
+    .recommended { align-self: start; padding: 0.3rem 0.45rem; color: #122111; border: 1px solid var(--nominal); background: var(--nominal); font: 800 0.6rem/1 ui-monospace, monospace; letter-spacing: 0.06em; text-transform: uppercase; }
+    .sim {
+      position: relative;
+      min-height: 20rem;
+      overflow: hidden;
+      padding: 0.8rem;
+      border: 1px solid #31475a;
+      background:
+        linear-gradient(rgba(113, 183, 211, 0.035) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(113, 183, 211, 0.035) 1px, transparent 1px),
+        #070d14;
+      background-size: 1.5rem 1.5rem;
+    }
+    .sim::before { content: attr(data-sim-label); display: block; margin-bottom: 0.65rem; color: var(--dim); font: 700 0.62rem/1.2 ui-monospace, monospace; letter-spacing: 0.08em; text-transform: uppercase; }
+    .option-note { margin: auto 0 0; color: var(--muted); font-size: 0.8rem; }
+
+    .task-card { min-width: 0; padding: 0.55rem; border: 1px solid #3b5367; background: #0f1d29; }
+    .task-card small { display: block; color: var(--cyan); font: 700 0.58rem/1.2 ui-monospace, monospace; }
+    .task-card strong { display: block; margin: 0.25rem 0; overflow: hidden; font-size: 0.72rem; line-height: 1.25; text-overflow: ellipsis; }
+    .task-card span { color: var(--muted); font-size: 0.65rem; }
+    .evidence-tag { display: inline-flex; margin-top: 0.45rem; padding: 0.2rem 0.35rem; color: #d9e5ee; border: 1px solid #53677a; font: 650 0.55rem/1 ui-monospace, monospace; }
+
+    .board-columns { display: grid; grid-template-columns: repeat(4, minmax(5.5rem, 1fr)); gap: 0.4rem; }
+    .board-column { min-width: 0; padding: 0.4rem; border: 1px solid #263b4d; background: rgba(9, 17, 25, 0.9); }
+    .phase-title { display: flex; justify-content: space-between; gap: 0.3rem; margin-bottom: 0.4rem; color: var(--muted); font: 750 0.54rem/1 ui-monospace, monospace; letter-spacing: 0.04em; text-transform: uppercase; }
+    .phase-stack { display: grid; gap: 0.35rem; }
+    .board-corridor { display: grid; gap: 0.65rem; }
+    .corridor-row { display: grid; grid-template-columns: 4.8rem 1fr; gap: 0.5rem; align-items: center; }
+    .corridor-label { color: var(--muted); font: 700 0.56rem/1.2 ui-monospace, monospace; }
+    .corridor-track { position: relative; min-height: 3.55rem; border-block: 1px solid #294357; background: linear-gradient(90deg, transparent 24%, #263d50 24% 24.6%, transparent 24.6% 49%, #263d50 49% 49.6%, transparent 49.6% 74%, #263d50 74% 74.6%, transparent 74.6%); }
+    .corridor-craft { position: absolute; top: 0.38rem; width: 25%; padding: 0.45rem; border: 1px solid #497084; background: #102533; }
+    .corridor-craft strong { display: block; overflow: hidden; font-size: 0.67rem; white-space: nowrap; text-overflow: ellipsis; }
+    .corridor-craft small { color: var(--cyan); font-size: 0.55rem; }
+    .gate-labels { display: grid; grid-template-columns: repeat(4, 1fr); color: var(--dim); font: 650 0.48rem/1.2 ui-monospace, monospace; text-align: center; text-transform: uppercase; }
+
+    .orbit-board { position: relative; min-height: 18rem; }
+    .orbit-track { position: absolute; inset: var(--orbit-inset); border: 1px solid #2c5267; border-radius: 50%; }
+    .orbit-core { position: absolute; inset: 37%; display: grid; place-items: center; border: 1px solid var(--cyan); border-radius: 50%; color: var(--cyan); background: #09202c; font: 800 0.58rem/1.1 ui-monospace, monospace; text-align: center; }
+    .orbit-task { position: absolute; width: 7.5rem; padding: 0.45rem; border: 1px solid #4e7185; background: #0f2230; font-size: 0.6rem; }
+    .orbit-task strong, .orbit-task span { display: block; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; }
+    .orbit-task span { color: var(--muted); }
+
+    .fleet-grid { display: grid; gap: 0.5rem; }
+    .fleet-card { display: grid; grid-template-columns: auto minmax(0, 1fr) auto; gap: 0.55rem; align-items: center; min-height: 3.55rem; padding: 0.45rem; border: 1px solid #30495d; background: #0d1924; }
+    .fleet-glyph { width: 2rem; height: 2rem; display: grid; place-items: center; border: 2px solid currentColor; border-radius: 50%; font: 800 0.56rem/1 ui-monospace, monospace; }
+    .fleet-name { min-width: 0; }
+    .fleet-name strong, .fleet-name small { display: block; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; }
+    .fleet-name strong { font-size: 0.74rem; }
+    .fleet-name small { color: var(--muted); font-size: 0.6rem; }
+    .health { font: 750 0.58rem/1.1 ui-monospace, monospace; text-transform: uppercase; }
+    .nominal { color: var(--nominal); }
+    .warning { color: var(--warning); }
+    .critical { color: var(--critical); }
+    .standby { color: var(--standby); }
+    .signal-lost { color: var(--lost); }
+    .provider-kimi { color: #84b8ff; }
+    .provider-antigravity { color: #dc9dff; }
+    .provider-codex { color: #6fe0aa; }
+    .mono-sev { color: #d4dde4; }
+    .fleet-card.brand-mode { border-left: 3px solid currentColor; }
+    .fleet-card.mono-mode { filter: grayscale(1); }
+    .capacity-row { margin-top: 0.65rem; }
+    .capacity-meta { display: flex; justify-content: space-between; gap: 0.4rem; color: var(--muted); font: 650 0.58rem/1.2 ui-monospace, monospace; }
+    .meter { height: 0.45rem; margin-top: 0.25rem; overflow: hidden; border: 1px solid #40586a; background: #081018; }
+    .meter > span { display: block; height: 100%; width: var(--meter); background: currentColor; }
+    .unknown-meter { height: 0.45rem; margin-top: 0.25rem; border: 1px dashed var(--lost); background: repeating-linear-gradient(135deg, rgba(196,167,231,.22) 0 .28rem, transparent .28rem .56rem); }
+
+    .motion-toolbar { display: flex; flex-wrap: wrap; align-items: center; gap: 0.65rem; padding: 0.85rem; border-bottom: 1px solid var(--line-soft); }
+    .motion-toolbar p { flex: 1 1 24rem; margin: 0; color: var(--muted); font-size: 0.82rem; }
+    .button, .button-secondary {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 0.65rem 0.9rem;
+      border: 1px solid var(--line);
+      border-radius: 0.35rem;
+      cursor: pointer;
+      font-weight: 750;
+      text-decoration: none;
+    }
+    .button { color: var(--cyan-ink); border-color: var(--cyan); background: var(--cyan); }
+    .button:hover { color: var(--cyan-ink); background: #b8f3ff; }
+    .button-secondary { color: var(--text); background: #13202c; }
+    .button-secondary:hover { border-color: #6a8297; background: #182a39; }
+    button:disabled { opacity: 0.5; cursor: not-allowed; }
+    .demo-state { min-height: 1.35rem; color: var(--warning); font: 750 0.66rem/1.2 ui-monospace, monospace; letter-spacing: 0.04em; text-transform: uppercase; }
+    .motion-sample { position: relative; display: grid; gap: 0.6rem; min-height: 14rem; align-content: center; }
+    .motion-track { position: relative; display: grid; grid-template-columns: 1fr auto 1fr; align-items: center; gap: 0.5rem; }
+    .motion-node { min-height: 4.5rem; display: grid; place-items: center; padding: 0.6rem; border: 1px solid #3c5569; color: var(--muted); background: #0b1721; font: 750 0.65rem/1.25 ui-monospace, monospace; text-align: center; }
+    .motion-node.active { color: var(--text); border-color: var(--cyan); }
+    .motion-arrow { color: var(--cyan); font-size: 1.3rem; }
+    .mission-card { position: absolute; z-index: 3; top: 50%; left: 1rem; width: calc(50% - 2.2rem); transform: translateY(-50%); padding: 0.5rem; border: 1px solid var(--cyan); color: var(--text); background: #113143; font-size: 0.65rem; }
+    .mission-card strong, .mission-card span { display: block; }
+    .mission-card span { color: #b9ccd8; }
+    .ambient-sweep { position: absolute; inset: 0; pointer-events: none; opacity: 0; background: linear-gradient(90deg, transparent, rgba(116,221,246,.22), transparent); transform: translateX(-100%); }
+    .demo-running .ambient-sweep { opacity: 1; animation: demo-sweep 0.9s ease-out 1; }
+    .demo-running .ambient .mission-card { animation: demo-ambient-card 0.9s ease-in-out 1; }
+    .demo-running .evidence-motion .mission-card { animation: demo-evidence-card 0.75s cubic-bezier(.2,.7,.2,1) forwards; }
+    .demo-complete .mission-card { left: calc(50% + 1.2rem); }
+    .demo-complete .motion-node:last-of-type { color: var(--nominal); border-color: var(--nominal); }
+    .demo-complete .motion-node:first-of-type { color: var(--muted); border-color: #3c5569; }
+    @keyframes demo-sweep { to { transform: translateX(100%); } }
+    @keyframes demo-ambient-card { 0%, 100% { transform: translateY(-50%) scale(1); } 50% { transform: translateY(-50%) scale(1.04); box-shadow: 0 0 2rem rgba(116,221,246,.4); } }
+    @keyframes demo-evidence-card { to { left: calc(50% + 1.2rem); } }
+
+    .analysis-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin: 2rem 0; }
+    .analysis-panel { min-width: 0; padding: 1.25rem; border: 1px solid var(--line); background: var(--deck); }
+    .analysis-panel h2 { margin: 0 0 0.8rem; font-size: 1.25rem; }
+    .analysis-panel p { color: var(--muted); }
+    .evidence-list { display: grid; gap: 0.7rem; margin: 0; padding: 0; list-style: none; }
+    .evidence-list li { padding-left: 0.8rem; border-left: 2px solid var(--cyan); color: #c6d4de; }
+    .evidence-list strong { color: var(--text); }
+    .boundary-diagram { display: grid; gap: 0.55rem; }
+    .diagram-row { display: grid; grid-template-columns: 1fr auto 1fr; gap: 0.45rem; align-items: center; }
+    .diagram-node { min-height: 4rem; display: grid; place-items: center; padding: 0.6rem; border: 1px solid #3d596c; background: #0e1c27; font: 700 0.66rem/1.3 ui-monospace, monospace; text-align: center; }
+    .diagram-node.kernel { border-color: var(--cyan); background: #0c2b38; }
+    .diagram-node.isolated { border-style: dashed; border-color: var(--lost); }
+    .diagram-arrow { color: var(--cyan); }
+    .kernel-brokers { display: grid; grid-template-columns: repeat(4, 1fr); gap: 0.35rem; }
+    .kernel-brokers span { padding: 0.45rem 0.2rem; border: 1px solid #3d596c; color: var(--muted); font: 650 0.57rem/1.2 ui-monospace, monospace; text-align: center; }
+    .flow-diagram { display: grid; grid-template-columns: repeat(6, 1fr); gap: 0.5rem; counter-reset: flow; }
+    .flow-step { position: relative; min-height: 7rem; padding: 0.75rem; border: 1px solid #3d596c; background: #0e1a25; }
+    .flow-step::before { counter-increment: flow; content: "0" counter(flow); display: block; margin-bottom: 0.75rem; color: var(--cyan); font: 800 0.7rem/1 ui-monospace, monospace; }
+    .flow-step strong { display: block; font-size: 0.78rem; }
+    .flow-step span { display: block; margin-top: 0.35rem; color: var(--muted); font-size: 0.68rem; }
+    .provenance {
+      margin: 2rem 0 8rem;
+      display: grid;
+      grid-template-columns: 0.8fr 1.2fr;
+      gap: 1rem;
+      padding: 1.25rem;
+      border: 1px solid #755f87;
+      background: #171321;
+    }
+    .provenance h2 { margin: 0; font-size: 1.2rem; }
+    .provenance p { margin: 0; color: #d0c5dc; }
+
+    .operate-view { width: min(92rem, calc(100% - 2rem)); margin: 0 auto 8rem; }
+    .operate-hero { width: 100%; padding-inline: 0; }
+    .operate-hero h1 { font-size: clamp(3rem, 7vw, 6.8rem); }
+    .fixture-notice { display: flex; align-items: center; gap: 0.75rem; padding: 0.9rem; border: 1px solid #80682e; color: #ffe0a1; background: #241d0d; }
+    .fixture-notice strong { flex: 0 0 auto; }
+    .operate-grid { display: grid; grid-template-columns: 1.3fr 0.8fr; gap: 1rem; margin-top: 1rem; }
+    .console { min-width: 0; padding: 1rem; border: 1px solid var(--line); background: var(--deck); }
+    .console h2 { display: flex; justify-content: space-between; gap: 1rem; margin: 0 0 1rem; font-size: 0.88rem; letter-spacing: 0.1em; text-transform: uppercase; }
+    .console h2 span { color: var(--dim); font: 650 0.62rem/1.4 ui-monospace, monospace; }
+    .operate-board { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 0.5rem; }
+    .operate-board .task-card { min-height: 6.4rem; }
+    .consumable { margin-bottom: 0.9rem; }
+    .log-list { margin: 0; padding: 0; list-style: none; }
+    .log-list li { display: grid; grid-template-columns: 4.5rem 1fr; gap: 0.6rem; padding: 0.65rem 0; border-top: 1px solid var(--line-soft); color: var(--muted); font-size: 0.75rem; }
+    .log-list time { color: var(--cyan); font-family: ui-monospace, monospace; }
+
+    .review-dock {
+      position: fixed;
+      z-index: 100;
+      right: 0;
+      bottom: 0;
+      left: 0;
+      border-top: 1px solid #536b7e;
+      background: rgba(7, 12, 18, 0.98);
+      box-shadow: 0 -1rem 2.5rem rgba(0,0,0,.48);
+      backdrop-filter: blur(18px);
+    }
+    .dock-bar { min-height: var(--dock-h); display: flex; align-items: center; gap: 1rem; padding: 0.7rem clamp(1rem, 3vw, 2.5rem); }
+    .dock-readout { min-width: 0; flex: 1; }
+    .dock-readout span, .dock-readout strong { display: block; }
+    .dock-readout span { color: var(--muted); font: 700 0.65rem/1.2 ui-monospace, monospace; letter-spacing: .08em; text-transform: uppercase; }
+    .dock-readout strong { margin-top: 0.2rem; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .dock-actions { display: flex; gap: 0.55rem; }
+    .desk-panel { max-height: calc(100svh - var(--dock-h)); overflow: auto; border-top: 1px solid var(--line-soft); }
+    .desk-grid { width: min(92rem, 100%); margin: 0 auto; display: grid; grid-template-columns: minmax(18rem, .8fr) minmax(22rem, 1.2fr); gap: 1.5rem; padding: 1.3rem clamp(1rem, 3vw, 2.5rem) 2rem; }
+    .field { display: grid; gap: 0.4rem; margin-bottom: 1rem; }
+    .field label { font-weight: 750; }
+    .field small, .microcopy { color: var(--muted); }
+    input[type="text"], textarea {
+      width: 100%;
+      padding: 0.8rem;
+      border: 1px solid #53687b;
+      border-radius: 0.35rem;
+      color: var(--text);
+      background: #060c12;
+    }
+    textarea { min-height: 8rem; resize: vertical; }
+    input[aria-invalid="true"], textarea[aria-invalid="true"] { border-color: var(--critical); box-shadow: 0 0 0 1px var(--critical); }
+    .selection-preview { margin: 0 0 1rem; border: 1px solid var(--line-soft); }
+    .selection-preview div { display: grid; grid-template-columns: 8.5rem 1fr; gap: 0.7rem; padding: 0.55rem 0.7rem; border-top: 1px solid var(--line-soft); }
+    .selection-preview div:first-child { border-top: 0; }
+    .selection-preview dt { color: var(--dim); font: 700 0.62rem/1.3 ui-monospace, monospace; text-transform: uppercase; }
+    .selection-preview dd { margin: 0; font-weight: 700; }
+    .validation { min-height: 1.5rem; margin: 0.5rem 0; color: var(--critical); }
+    .draft-status { min-height: 1.4rem; color: var(--muted); font-size: 0.8rem; }
+    .draft-status.error { color: var(--critical); }
+    .receipt-actions { display: flex; flex-wrap: wrap; gap: 0.55rem; margin: 0.75rem 0; }
+    .receipt-preview { min-height: 7.5rem; max-height: 14rem; overflow: auto; padding: 0.75rem; border: 1px solid var(--line-soft); color: #c9d6df; background: #05090e; font: 0.7rem/1.45 ui-monospace, monospace; white-space: pre-wrap; overflow-wrap: anywhere; }
+    .copy-fallback { padding: 0.8rem; border: 1px solid var(--warning); background: #28200e; }
+    .copy-fallback p { color: #ffe0a1; }
+    .copy-fallback textarea { min-height: 5rem; }
+    .handoff { padding: 0.75rem; border-left: 3px solid var(--warning); color: #ffe1a7; background: #211a0b; font-size: 0.82rem; }
+
+    .artifact-footer { width: min(92rem, calc(100% - 2rem)); margin: -5.5rem auto 7rem; padding-top: 1rem; border-top: 1px solid var(--line-soft); color: var(--muted); font-size: 0.78rem; }
+    .artifact-footer strong { color: var(--warning); }
+
+    @media (max-width: 75rem) {
+      .option-grid { grid-template-columns: 1fr; }
+      .sim { min-height: 17rem; }
+      .card-head { grid-template-columns: 4rem 1fr; }
+      .card-head .rationale { grid-column: 2; }
+      .flow-diagram { grid-template-columns: repeat(3, 1fr); }
+    }
+    @media (max-width: 55rem) {
+      .topbar { grid-template-columns: 1fr auto; }
+      .surface-tabs { order: 3; grid-column: 1 / -1; justify-self: center; margin-top: 0.45rem; }
+      .top-meta .chip:first-child { display: none; }
+      .analysis-grid, .provenance, .operate-grid { grid-template-columns: 1fr; }
+      .operate-board { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      .desk-grid { grid-template-columns: 1fr; }
+      .kernel-brokers { grid-template-columns: repeat(2, 1fr); }
+    }
+    @media (max-width: 42rem) {
+      :root { --dock-h: 4.8rem; }
+      .topbar { padding: 0.55rem 0.75rem; }
+      .brand-copy span { display: none; }
+      .brand-glyph { width: 2.3rem; height: 2.3rem; }
+      .top-meta .chip { display: none; }
+      .surface-tab { min-width: 6rem; }
+      .hero, .compare-layout, .operate-view, .artifact-footer { width: min(100% - 1rem, 92rem); }
+      .hero { padding-top: 3.5rem; }
+      .recommendation-band { grid-template-columns: 1fr; }
+      .recommendation-band > div:first-child { border-right: 0; border-bottom: 1px solid #45697b; }
+      .card-head { grid-template-columns: 1fr; padding: 1rem; }
+      .card-index { font-size: 2.5rem; }
+      .card-head .rationale { grid-column: 1; }
+      .option { padding: 0.7rem; }
+      .option-heading { grid-template-columns: 2.75rem 1fr; }
+      .recommended { grid-column: 2; justify-self: start; }
+      .sim { min-height: 16rem; }
+      .board-columns { grid-template-columns: repeat(4, minmax(6.25rem, 1fr)); overflow-x: auto; padding-bottom: 0.4rem; }
+      .board-columns::after { content: "Swipe board lanes →"; position: sticky; right: 0; color: var(--dim); font: 650 0.55rem/1 ui-monospace, monospace; }
+      .orbit-task { width: 6.2rem; }
+      .orbit-task:nth-of-type(5) { display: none; }
+      .analysis-grid { margin-top: 1rem; }
+      .flow-diagram { grid-template-columns: 1fr 1fr; }
+      .diagram-row { grid-template-columns: 1fr; }
+      .diagram-arrow { transform: rotate(90deg); justify-self: center; }
+      .operate-board { grid-template-columns: 1fr; }
+      .dock-bar { gap: 0.5rem; padding-inline: 0.7rem; }
+      .dock-readout strong { max-width: 10rem; }
+      .dock-actions .button { display: none; }
+      .desk-grid { padding: 1rem 0.7rem 1.4rem; }
+      .selection-preview div { grid-template-columns: 1fr; gap: 0.2rem; }
+      .receipt-actions > * { flex: 1 1 9rem; }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      :root { scroll-behavior: auto; }
+      *, *::before, *::after { scroll-behavior: auto !important; animation-duration: 0.001ms !important; animation-iteration-count: 1 !important; transition-duration: 0.001ms !important; }
+      .demo-running .ambient-sweep, .demo-running .mission-card { animation: none !important; }
+      .demo-running .mission-card { left: calc(50% + 1.2rem); }
+    }
+    html[data-motion="off"] { scroll-behavior: auto; }
+    html[data-motion="off"] *, html[data-motion="off"] *::before, html[data-motion="off"] *::after { animation: none !important; transition-duration: 0.001ms !important; scroll-behavior: auto !important; }
+    html[data-motion="off"] .demo-running .mission-card { left: calc(50% + 1.2rem); }
+    @media print {
+      .topbar, .review-dock, .skip-link, .motion-toolbar { display: none; }
+      body { padding-bottom: 0; }
+    }
+  </style>
+</head>
+<body>
+  <a class="skip-link" href="#review-desk">Skip to Review Desk</a>
+
+  <header class="topbar">
+    <div class="brand" aria-label="Cinematix Mission Control">
+      <span class="brand-glyph" aria-hidden="true"></span>
+      <span class="brand-copy"><strong>ORBITAL COMMAND</strong><span>SYSTEMS QUALIFICATION</span></span>
+    </div>
+    <div class="surface-tabs" role="tablist" aria-label="Review surfaces">
+      <button class="surface-tab" id="tab-compare" role="tab" aria-selected="true" aria-controls="compare-view" tabindex="0" type="button">Compare</button>
+      <button class="surface-tab" id="tab-operate" role="tab" aria-selected="false" aria-controls="operate-view" tabindex="-1" type="button">Operate</button>
+    </div>
+    <div class="top-meta">
+      <span class="chip pending">Review pending</span>
+      <span class="chip">DEC-002/r1</span>
+    </div>
+  </header>
+
+  <main>
+    <div id="compare-view" role="tabpanel" aria-labelledby="tab-compare">
+      <section class="hero" aria-labelledby="decision-title">
+        <p class="eyebrow">DEC-002 · Three linked decisions · fixture-only</p>
+        <h1 id="decision-title">Choose how Orbital Command tells the truth.</h1>
+        <p class="hero-lede">Compare nine live treatments built from one shared mission fixture. Select a board geometry, status language, and motion policy; the review stays local until David posts its receipt to Linear NEO-120.</p>
+        <div class="hero-meta" aria-label="Artifact status">
+          <span class="chip">Primary · Compare</span>
+          <span class="chip">Secondary · Operate</span>
+          <span class="chip">No live systems</span>
+          <span class="chip">Source · 771710c</span>
+        </div>
+      </section>
+
+      <div class="compare-layout">
+        <aside class="recommendation-band" aria-label="Design council recommendation">
+          <div>Recommended system<br>A1 + B1 + C2</div>
+          <div><strong>Dense columns · semantic health · motion is evidence</strong><p>Columns win the operating density test when paired with visible phase gates. Semantic colors preserve health meaning across providers. Motion is reserved for committed state change, so a quiet room never pretends that work is happening.</p></div>
+        </aside>
+
+        <section class="decision-card" aria-labelledby="board-title">
+          <div class="card-head">
+            <div class="card-index" aria-hidden="true">A</div>
+            <div><p class="section-kicker">Mission board geometry</p><h2 id="board-title">Where does work live?</h2><p>All three boards show the same four fixture tasks, phases, owners, and evidence state.</p></div>
+            <p class="rationale"><strong>Recommendation · A1</strong>Familiar dense columns minimize training cost and remain legible under operational load. Borrow the corridor’s gate markers; reserve orbit geometry for fleet and dependency context.</p>
+          </div>
+          <fieldset aria-describedby="board-help">
+            <legend class="sr-only">Select a mission board geometry</legend>
+            <p id="board-help" class="sr-only">Use arrow keys while a choice is focused. Each option renders the same fixture work in a different geometry.</p>
+            <div class="option-grid">
+              <label class="option" for="board-columns-choice">
+                <input id="board-columns-choice" type="radio" name="boardGeometry" value="dense-columns" data-name="Restyled dense columns">
+                <span class="option-heading"><span class="radio-mark">A1</span><span class="option-title"><strong>Restyled dense columns</strong><span>Fastest scan · highest density</span></span><span class="recommended">Recommended</span></span>
+                <span class="sim board-sim" id="board-columns-sim" data-sim-label="Live fixture · four phase lanes" aria-label="Live fixture · Restyled dense columns"></span>
+                <span class="option-note">Best for daily operation; phase-gate symbols reduce generic-kanban drift.</span>
+              </label>
+              <label class="option" for="board-corridor-choice">
+                <input id="board-corridor-choice" type="radio" name="boardGeometry" value="flight-corridor" data-name="Horizontal flight corridor">
+                <span class="option-heading"><span class="radio-mark">A2</span><span class="option-title"><strong>Horizontal flight corridor</strong><span>Strong phase story · medium density</span></span></span>
+                <span class="sim board-sim" id="board-corridor-sim" data-sim-label="Live fixture · gated trajectories" aria-label="Live fixture · Horizontal flight corridor"></span>
+                <span class="option-note">Makes handoffs explicit, but long titles and many missions compete for track space.</span>
+              </label>
+              <label class="option" for="board-orbit-choice">
+                <input id="board-orbit-choice" type="radio" name="boardGeometry" value="radial-docking" data-name="Radial orbit and docking">
+                <span class="option-heading"><span class="radio-mark">A3</span><span class="option-title"><strong>Radial orbit / docking</strong><span>Distinctive context · lowest density</span></span></span>
+                <span class="sim board-sim" id="board-orbit-sim" data-sim-label="Live fixture · dock-centered orbit" aria-label="Live fixture · Radial orbit and docking"></span>
+                <span class="option-note">Excellent for presence and dependencies; weaker for dense task operation.</span>
+              </label>
+            </div>
+          </fieldset>
+        </section>
+
+        <section class="decision-card" aria-labelledby="status-title">
+          <div class="card-head">
+            <div class="card-index" aria-hidden="true">B</div>
+            <div><p class="section-kicker">Status and capacity system</p><h2 id="status-title">What owns color?</h2><p>Every option renders the same three callsigns, providers, health states, and capacity confidence.</p></div>
+            <p class="rationale"><strong>Recommendation · B1</strong>Health is a cross-provider safety language. Callsign and glyph carry identity; icon plus label repeats every state; spend alone gets the reserved gold accent.</p>
+          </div>
+          <fieldset aria-describedby="status-help">
+            <legend class="sr-only">Select a status and capacity system</legend>
+            <p id="status-help" class="sr-only">Use arrow keys while a choice is focused. Each option renders the same fixture fleet with different color rules.</p>
+            <div class="option-grid">
+              <label class="option" for="status-semantic-choice">
+                <input id="status-semantic-choice" type="radio" name="statusSystem" value="semantic-callsigns" data-name="Semantic health with callsign identity">
+                <span class="option-heading"><span class="radio-mark">B1</span><span class="option-title"><strong>Semantic health + callsigns</strong><span>Stable meaning across providers</span></span><span class="recommended">Recommended</span></span>
+                <span class="sim status-sim" id="status-semantic-sim" data-sim-label="Live fixture · semantic state tokens" aria-label="Live fixture · Semantic health with callsign identity"></span>
+                <span class="option-note">Nominal, warning, critical, standby, and signal lost always mean the same thing.</span>
+              </label>
+              <label class="option" for="status-provider-choice">
+                <input id="status-provider-choice" type="radio" name="statusSystem" value="provider-hues" data-name="Provider-brand hues">
+                <span class="option-heading"><span class="radio-mark">B2</span><span class="option-title"><strong>Provider-brand hues</strong><span>Strong identity · weak health scan</span></span></span>
+                <span class="sim status-sim" id="status-provider-sim" data-sim-label="Live fixture · provider-owned colors" aria-label="Live fixture · Provider-brand hues"></span>
+                <span class="option-note">Recognizable providers, but warning can disappear into a brand palette.</span>
+              </label>
+              <label class="option" for="status-mono-choice">
+                <input id="status-mono-choice" type="radio" name="statusSystem" value="monochrome-severity" data-name="Monochrome severity">
+                <span class="option-heading"><span class="radio-mark">B3</span><span class="option-title"><strong>Monochrome severity</strong><span>Quiet field · slower exception scan</span></span></span>
+                <span class="sim status-sim" id="status-mono-sim" data-sim-label="Live fixture · label-first severity" aria-label="Live fixture · Monochrome severity"></span>
+                <span class="option-note">Calm and accessible, but urgent differences require more reading.</span>
+              </label>
+            </div>
+          </fieldset>
+        </section>
+
+        <section class="decision-card" id="motion-card" aria-labelledby="motion-title">
+          <div class="card-head">
+            <div class="card-index" aria-hidden="true">C</div>
+            <div><p class="section-kicker">Motion policy</p><h2 id="motion-title">When may the room move?</h2><p>All samples begin at Verification. Motion occurs only after the operator runs the labeled fixture event.</p></div>
+            <p class="rationale"><strong>Recommendation · C2</strong>A pulse is a claim. Animate only when a durable event crosses a gate; keep steady state calm; use freshness text for liveness; honor reduced motion without losing evidence.</p>
+          </div>
+          <div class="motion-toolbar">
+            <p><strong>Clearly labeled demo:</strong> commit fixture event <span class="mono">STUDIO-P0-014 · Verification → Docked</span>. This does not represent real work.</p>
+            <button class="button" id="run-demo" type="button">Run demo transition</button>
+            <button class="button-secondary" id="reset-demo" type="button">Reset demo</button>
+            <button class="button-secondary" id="motion-toggle" type="button" aria-pressed="false">Motion: auto</button>
+            <output class="demo-state" id="demo-state" aria-live="polite">Demo ready · no transition running</output>
+          </div>
+          <fieldset aria-describedby="motion-help">
+            <legend class="sr-only">Select a motion policy</legend>
+            <p id="motion-help" class="sr-only">Use arrow keys while a choice is focused. Run the labeled demo to compare how the same committed fixture event is represented.</p>
+            <div class="option-grid">
+              <label class="option" for="motion-ambient-choice">
+                <input id="motion-ambient-choice" type="radio" name="motionPolicy" value="ambient-control" data-name="Ambient mission-control">
+                <span class="option-heading"><span class="radio-mark">C1</span><span class="option-title"><strong>Ambient mission-control</strong><span>Rich response · highest misread risk</span></span></span>
+                <span class="sim motion-sample ambient" data-sim-label="Demo only · decorative sweep plus event" aria-label="Demo fixture · Ambient mission-control" data-demo-event="STUDIO-P0-014 · Verification → Docked">
+                  <span class="ambient-sweep" aria-hidden="true"></span><span class="motion-track"><span class="motion-node active">VERIFICATION<br>Evidence 3/3</span><span class="motion-arrow" aria-hidden="true">→</span><span class="motion-node">DOCKED<br>Gate closed</span><span class="mission-card"><strong>STUDIO-P0-014</strong><span>Independent review</span></span></span>
+                </span>
+                <span class="option-note">The sweep is explicitly decorative and runs only during the labeled demo event.</span>
+              </label>
+              <label class="option" for="motion-evidence-choice">
+                <input id="motion-evidence-choice" type="radio" name="motionPolicy" value="motion-evidence" data-name="Motion is evidence">
+                <span class="option-heading"><span class="radio-mark">C2</span><span class="option-title"><strong>Motion is evidence</strong><span>Committed events only</span></span><span class="recommended">Recommended</span></span>
+                <span class="sim motion-sample evidence-motion" data-sim-label="Demo only · committed gate crossing" aria-label="Demo fixture · Motion is evidence" data-demo-event="STUDIO-P0-014 · Verification → Docked">
+                  <span class="motion-track"><span class="motion-node active">VERIFICATION<br>Evidence 3/3</span><span class="motion-arrow" aria-hidden="true">→</span><span class="motion-node">DOCKED<br>Gate closed</span><span class="mission-card"><strong>STUDIO-P0-014</strong><span>Independent review</span></span></span>
+                </span>
+                <span class="option-note">Only the work object moves, and only because the demo commits a named transition.</span>
+              </label>
+              <label class="option" for="motion-static-choice">
+                <input id="motion-static-choice" type="radio" name="motionPolicy" value="near-static" data-name="Near-static operations">
+                <span class="option-heading"><span class="radio-mark">C3</span><span class="option-title"><strong>Near-static operations</strong><span>State swap · minimal movement</span></span></span>
+                <span class="sim motion-sample near-static" data-sim-label="Demo only · instantaneous state update" aria-label="Demo fixture · Near-static operations" data-demo-event="STUDIO-P0-014 · Verification → Docked">
+                  <span class="motion-track"><span class="motion-node active">VERIFICATION<br>Evidence 3/3</span><span class="motion-arrow" aria-hidden="true">→</span><span class="motion-node">DOCKED<br>Gate closed</span><span class="mission-card"><strong>STUDIO-P0-014</strong><span>Independent review</span></span></span>
+                </span>
+                <span class="option-note">The destination changes immediately; the audit log carries the evidence.</span>
+              </label>
+            </div>
+          </fieldset>
+        </section>
+
+        <section class="analysis-grid" aria-label="Research evidence and secure architecture">
+          <article class="analysis-panel">
+            <p class="section-kicker">Concise council evidence</p>
+            <h2>Why these decisions are blocking</h2>
+            <ul class="evidence-list">
+              <li><strong>Fable product/design:</strong> the fleet check, visible role flow, and honest capacity states are worth fostering; browser theater and fake metrics are not.</li>
+              <li><strong>GPT security/architecture:</strong> three P0s block source adoption—unprotected privileged routes, same-origin generated code, and broad home-file exposure.</li>
+              <li><strong>Joint direction:</strong> preserve behavior-level lessons behind a small secure kernel; independently create the product expression.</li>
+            </ul>
+          </article>
+          <article class="analysis-panel">
+            <p class="section-kicker">Secure kernel boundary</p>
+            <h2>Authority stays behind policy</h2>
+            <div class="boundary-diagram" role="img" aria-label="Operator browser reaches an authenticated control plane and deterministic state, which alone use scoped privilege brokers. Generated artifacts run in an isolated plane with no control credentials or network by default.">
+              <div class="diagram-row"><span class="diagram-node">Operator browser<br>untrusted input</span><span class="diagram-arrow" aria-hidden="true">→</span><span class="diagram-node kernel">Authenticated control plane<br>policy + capability gate</span></div>
+              <div class="diagram-row"><span class="diagram-node isolated">Isolated artifact plane<br>separate origin · no network</span><span class="diagram-arrow" aria-hidden="true">↕</span><span class="diagram-node kernel">Transactional state<br>events · leases · receipts</span></div>
+              <div class="kernel-brokers" aria-label="Scoped privilege brokers"><span>FILE BROKER</span><span>PROCESS BROKER</span><span>SECRET BROKER</span><span>EGRESS BROKER</span></div>
+            </div>
+          </article>
+        </section>
+
+        <section class="analysis-panel" aria-labelledby="flow-title">
+          <p class="section-kicker">Clean-room fostering flow</p>
+          <h2 id="flow-title">Ideas cross; expression does not</h2>
+          <div class="flow-diagram" role="list">
+            <div class="flow-step" role="listitem"><strong>Quarantine</strong><span>Restricted corpus remains outside Studio and read-only.</span></div>
+            <div class="flow-step" role="listitem"><strong>Behavior spec</strong><span>Original language records outcomes, states, and rejects.</span></div>
+            <div class="flow-step" role="listitem"><strong>Design decision</strong><span>David resolves geometry, semantics, and motion.</span></div>
+            <div class="flow-step" role="listitem"><strong>Independent build</strong><span>Implementers use released specs and fixture data only.</span></div>
+            <div class="flow-step" role="listitem"><strong>Similarity review</strong><span>Reviewer checks expression leakage and provenance.</span></div>
+            <div class="flow-step" role="listitem"><strong>Promotion gate</strong><span>Exact artifacts, checks, authority, and license disposition.</span></div>
+          </div>
+        </section>
+
+        <aside class="provenance" aria-labelledby="provenance-title">
+          <div><p class="section-kicker">Provenance / license boundary</p><h2 id="provenance-title">Original Orbital Command expression</h2></div>
+          <p>Source basis: Studio’s clean-room fostering plan, Fable product/design assessment, GPT security/architecture assessment, and accepted ADR-001 at commit <code>771710c</code>. The restricted reference pack is not installed, run, copied, redistributed, or treated as authority. No source code, prompts, interface copy, assets, screenshots, creator identifiers, or distinctive palette values cross into this disposable artifact.</p>
+        </aside>
+      </div>
+    </div>
+
+    <div class="operate-view" id="operate-view" role="tabpanel" aria-labelledby="tab-operate" hidden>
+      <section class="operate-hero" aria-labelledby="operate-title">
+        <p class="eyebrow">Secondary surface · read-only fixture projection</p>
+        <h1 id="operate-title">Operate the mission without pretending it is live.</h1>
+        <p class="hero-lede">This composited view demonstrates the recommended A1 + B1 + C2 system. It has no scheduler, provider connection, task mutation, artifact execution, or external effect.</p>
+      </section>
+      <div class="fixture-notice" role="note"><strong>FIXTURE SNAPSHOT</strong><span>Captured 2026-07-18 18:40 UTC · static sample · no real agents or capacity · no work controls</span></div>
+      <div class="operate-grid">
+        <section class="console" aria-labelledby="operate-board-title"><h2 id="operate-board-title">Tasking <span>4 fixture missions</span></h2><div class="operate-board" id="operate-board"></div></section>
+        <section class="console" aria-labelledby="fleet-title"><h2 id="fleet-title">Fleet status <span>callsign identity</span></h2><div id="operate-fleet"></div></section>
+        <section class="console" aria-labelledby="capacity-title"><h2 id="capacity-title">Consumables <span>provenance shown</span></h2><div id="operate-capacity"></div></section>
+        <section class="console" aria-labelledby="activity-title"><h2 id="activity-title">Verified activity <span>static event log</span></h2><ul class="log-list"><li><time>18:31:04</time><span>NEO-110 entered Verification · artifact threat-model-v1</span></li><li><time>18:22:17</time><span>NEO-115 lease renewed by craft PIONEER</span></li><li><time>18:09:42</time><span>Capacity reading marked SIGNAL LOST · no zero inferred</span></li></ul></section>
+      </div>
+    </div>
+  </main>
+
+  <footer class="artifact-footer">
+    <p><strong>Disposable Phase 0 visual review · implementation is not approved.</strong> Artifact <code>prototypes/decision-002/index.html</code> · revision <code>DEC-002/r1</code> · source basis <code>771710c</code> · authority <code>NEO-120</code>. Browser code stores a local draft and exports a receipt; it never writes to Linear and contains no credentials or production data.</p>
+  </footer>
+
+  <aside class="review-dock" id="review-desk" tabindex="-1" aria-label="Review Desk">
+    <div class="dock-bar">
+      <div class="dock-readout" aria-live="polite"><span>Review Desk · 3 selections required</span><strong id="dock-readout">0 of 3 selected · comment required</strong></div>
+      <div class="dock-actions"><button class="button" id="dock-generate" type="button">Generate receipt</button><button class="button-secondary" id="desk-toggle" type="button" aria-expanded="false" aria-controls="desk-panel">Open Review Desk</button></div>
+    </div>
+    <div class="desk-panel" id="desk-panel" hidden>
+      <div class="desk-grid">
+        <div>
+          <div class="field"><label for="reviewer">Reviewer</label><input id="reviewer" type="text" value="David" autocomplete="name" required></div>
+          <div class="field"><label for="comment">Meaningful review comment <span aria-hidden="true">*</span></label><textarea id="comment" required minlength="20" aria-describedby="comment-help" placeholder="What should the specification preserve, change, or prove next?"></textarea><small id="comment-help">Required: at least 20 characters and four words. Saved only on this device. Do not include sensitive or production data.</small></div>
+          <output class="draft-status" id="draft-status" aria-live="polite">Draft ready · local device only</output>
+          <button class="button-secondary" id="clear-draft" type="button">Clear draft</button>
+        </div>
+        <div>
+          <p class="section-kicker">Structured selection preview</p>
+          <dl class="selection-preview" id="selection-preview">
+            <div><dt>Board geometry</dt><dd id="preview-board">Not selected</dd></div>
+            <div><dt>Status system</dt><dd id="preview-status">Not selected</dd></div>
+            <div><dt>Motion policy</dt><dd id="preview-motion">Not selected</dd></div>
+          </dl>
+          <p class="validation" id="validation" role="alert"></p>
+          <button class="button" id="generate-receipt" type="button">Generate revision-bound receipt</button>
+          <div class="receipt-actions">
+            <button class="button-secondary" id="copy-markdown" type="button" disabled>Copy Markdown</button>
+            <button class="button-secondary" id="download-markdown" type="button" disabled>Download Markdown</button>
+            <a class="button-secondary" id="linear-link" href="https://linear.app/neoduck/issue/NEO-120" target="_blank" rel="noopener">Open NEO-120</a>
+          </div>
+          <pre class="receipt-preview" id="receipt-preview" aria-label="Structured receipt preview">Complete all three selections and the required comment, then generate a receipt.</pre>
+          <div class="copy-fallback" id="copy-fallback" hidden><p>Clipboard access is unavailable. Copy the selected Markdown below.</p><textarea id="fallback-text" readonly aria-label="Markdown receipt to copy manually"></textarea></div>
+          <p class="handoff"><strong>Required before Done:</strong> copy or download this receipt, open Linear NEO-120, and post it as a comment. A local receipt does not approve implementation or change authoritative decision state.</p>
+          <p class="microcopy">Checksum: SHA-256 over the canonical JSON payload before the checksum field is added. Changing any selection, reviewer, or comment invalidates the export.</p>
+        </div>
+      </div>
+    </div>
+  </aside>
+
+  <script>
+    (function () {
+      'use strict';
+
+      var DECISION_ID = 'DEC-002';
+      var PROTOTYPE_REVISION = 'DEC-002/r1';
+      var SOURCE_BASIS_COMMIT = '771710c';
+      var ARTIFACT_PATH = 'prototypes/decision-002/index.html';
+      var STORAGE_KEY = 'studio.dec-002.draft';
+      var QUESTION = 'Which Orbital Command board geometry, status system, and motion policy should be promoted into specification?';
+      var LINEAR_ISSUE = 'NEO-120';
+      var FIXTURE = {
+        capturedAt: '2026-07-18T18:40:00.000Z',
+        tasks: [
+          { id: 'NEO-107', title: 'Freeze authority matrix', phase: 'manifest', owner: 'ATLAS', evidence: '2/3' },
+          { id: 'NEO-115', title: 'Qualify Orbital Command', phase: 'flight', owner: 'PIONEER', evidence: '1/3' },
+          { id: 'NEO-110', title: 'Threat-model hostile artifacts', phase: 'verification', owner: 'SENTRY', evidence: '3/3' },
+          { id: 'NEO-114', title: 'Record implementation stack', phase: 'docked', owner: 'ATLAS', evidence: '3/3' }
+        ],
+        agents: [
+          { callsign: 'ATLAS', glyph: 'AT', provider: 'Codex', providerClass: 'provider-codex', health: 'nominal', label: 'NOMINAL', detail: 'projection age 4 s' },
+          { callsign: 'PIONEER', glyph: 'PI', provider: 'Kimi', providerClass: 'provider-kimi', health: 'warning', label: 'WARNING', detail: 'lease expires 02:14' },
+          { callsign: 'SENTRY', glyph: 'SE', provider: 'Antigravity', providerClass: 'provider-antigravity', health: 'signal-lost', label: 'SIGNAL LOST', detail: 'usage not tracked' }
+        ],
+        capacity: [
+          { name: 'Codex session window', value: 64, label: '64% remaining', provenance: 'measured', state: 'nominal' },
+          { name: 'Kimi quota', value: 31, label: '31% remaining', provenance: 'reconciled', state: 'warning' },
+          { name: 'Antigravity usage', value: null, label: 'SIGNAL LOST · not zero', provenance: 'not tracked', state: 'signal-lost' }
+        ]
+      };
+
+      var phaseNames = { manifest: 'Manifest', flight: 'In Flight', verification: 'Verification', docked: 'Docked' };
+      var receipt = null;
+      var receiptMarkdown = '';
+      var saveTimer = null;
+      var demoTimer = null;
+      var draftCleared = false;
+      var root = document.documentElement;
+      var reviewer = document.getElementById('reviewer');
+      var comment = document.getElementById('comment');
+      var validation = document.getElementById('validation');
+      var receiptPreview = document.getElementById('receipt-preview');
+      var draftStatus = document.getElementById('draft-status');
+      var deskPanel = document.getElementById('desk-panel');
+      var deskToggle = document.getElementById('desk-toggle');
+      var copyFallback = document.getElementById('copy-fallback');
+      var fallbackText = document.getElementById('fallback-text');
+      var exportButtons = [document.getElementById('copy-markdown'), document.getElementById('download-markdown')];
+      var selectionGroups = ['boardGeometry', 'statusSystem', 'motionPolicy'];
+      var previewIds = { boardGeometry: 'preview-board', statusSystem: 'preview-status', motionPolicy: 'preview-motion' };
+
+      function escapeHtml(value) {
+        return String(value).replace(/[&<>"']/g, function (character) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#039;' }[character]; });
+      }
+
+      function taskCard(task) {
+        return '<span class="task-card" data-fixture-task="' + escapeHtml(task.id) + '"><small>' + escapeHtml(task.id) + ' · ' + escapeHtml(task.owner) + '</small><strong>' + escapeHtml(task.title) + '</strong><span>' + escapeHtml(phaseNames[task.phase]) + '</span><span class="evidence-tag">EVIDENCE ' + escapeHtml(task.evidence) + '</span></span>';
+      }
+
+      function renderBoards() {
+        var columns = ['manifest', 'flight', 'verification', 'docked'].map(function (phase) {
+          var tasks = FIXTURE.tasks.filter(function (task) { return task.phase === phase; });
+          return '<span class="board-column"><span class="phase-title"><span>' + phaseNames[phase] + '</span><span>' + tasks.length + '</span></span><span class="phase-stack">' + tasks.map(taskCard).join('') + '</span></span>';
+        }).join('');
+        document.getElementById('board-columns-sim').innerHTML = '<span class="board-columns">' + columns + '</span>';
+
+        var positions = { manifest: 0, flight: 25, verification: 50, docked: 75 };
+        var corridor = FIXTURE.tasks.map(function (task) {
+          return '<span class="corridor-row" data-fixture-task="' + escapeHtml(task.id) + '"><span class="corridor-label">' + escapeHtml(task.id) + '<br>' + escapeHtml(task.owner) + '</span><span class="corridor-track"><span class="corridor-craft" style="left:' + positions[task.phase] + '%"><small>' + escapeHtml(phaseNames[task.phase]) + '</small><strong>' + escapeHtml(task.title) + '</strong></span></span></span>';
+        }).join('');
+        document.getElementById('board-corridor-sim').innerHTML = '<span class="gate-labels"><span>Manifest</span><span>In Flight</span><span>Verify</span><span>Dock</span></span><span class="board-corridor">' + corridor + '</span>';
+
+        var orbitPositions = [
+          'top:3%;left:34%', 'top:35%;right:1%', 'bottom:3%;left:34%', 'top:35%;left:1%'
+        ];
+        var orbitTasks = FIXTURE.tasks.map(function (task, index) {
+          return '<span class="orbit-task" data-fixture-task="' + escapeHtml(task.id) + '" style="' + orbitPositions[index] + '"><strong>' + escapeHtml(task.id) + ' · ' + escapeHtml(task.owner) + '</strong><span>' + escapeHtml(task.title) + '</span><span>' + escapeHtml(phaseNames[task.phase]) + '</span></span>';
+        }).join('');
+        document.getElementById('board-orbit-sim').innerHTML = '<span class="orbit-board"><span class="orbit-track" style="--orbit-inset:4%"></span><span class="orbit-track" style="--orbit-inset:18%"></span><span class="orbit-core">MISSION<br>DOCK</span>' + orbitTasks + '</span>';
+      }
+
+      function fleetCard(agent, mode) {
+        var colorClass = mode === 'semantic' ? agent.health : mode === 'provider' ? agent.providerClass : 'mono-sev';
+        var modeClass = mode === 'provider' ? ' brand-mode' : mode === 'mono' ? ' mono-mode' : '';
+        return '<span class="fleet-card ' + colorClass + modeClass + '" data-fixture-agent="' + escapeHtml(agent.callsign) + '"><span class="fleet-glyph" aria-hidden="true">' + escapeHtml(agent.glyph) + '</span><span class="fleet-name"><strong>' + escapeHtml(agent.callsign) + '</strong><small>' + escapeHtml(agent.provider) + ' · ' + escapeHtml(agent.detail) + '</small></span><span class="health">' + (agent.health === 'nominal' ? '●' : agent.health === 'warning' ? '▲' : '◇') + ' ' + escapeHtml(agent.label) + '</span></span>';
+      }
+
+      function capacityRows(mode) {
+        return FIXTURE.capacity.map(function (item) {
+          var colorClass = mode === 'semantic' ? item.state : mode === 'provider' ? 'provider-kimi' : 'mono-sev';
+          var meter = item.value === null ? '<span class="unknown-meter" aria-label="Unknown usage"></span>' : '<span class="meter ' + colorClass + '"><span style="--meter:' + item.value + '%"></span></span>';
+          return '<span class="capacity-row" data-fixture-capacity="' + escapeHtml(item.name) + '"><span class="capacity-meta"><span>' + escapeHtml(item.name) + '</span><span>' + escapeHtml(item.label) + ' · ' + escapeHtml(item.provenance) + '</span></span>' + meter + '</span>';
+        }).join('');
+      }
+
+      function renderStatus() {
+        [['status-semantic-sim', 'semantic'], ['status-provider-sim', 'provider'], ['status-mono-sim', 'mono']].forEach(function (entry) {
+          document.getElementById(entry[0]).innerHTML = '<span class="fleet-grid">' + FIXTURE.agents.map(function (agent) { return fleetCard(agent, entry[1]); }).join('') + '</span>' + capacityRows(entry[1]);
+        });
+      }
+
+      function renderOperate() {
+        document.getElementById('operate-board').innerHTML = FIXTURE.tasks.map(taskCard).join('');
+        document.getElementById('operate-fleet').innerHTML = '<span class="fleet-grid">' + FIXTURE.agents.map(function (agent) { return fleetCard(agent, 'semantic'); }).join('') + '</span>';
+        document.getElementById('operate-capacity').innerHTML = capacityRows('semantic');
+      }
+
+      function setSurface(name, moveFocus) {
+        var compare = name === 'compare';
+        document.getElementById('compare-view').hidden = !compare;
+        document.getElementById('operate-view').hidden = compare;
+        ['compare', 'operate'].forEach(function (surface) {
+          var tab = document.getElementById('tab-' + surface);
+          var active = surface === name;
+          tab.setAttribute('aria-selected', String(active));
+          tab.tabIndex = active ? 0 : -1;
+        });
+        if (moveFocus) document.getElementById('tab-' + name).focus();
+        window.scrollTo(0, 0);
+      }
+
+      function selected(group) {
+        return document.querySelector('input[name="' + group + '"]:checked');
+      }
+
+      function selections() {
+        var board = selected('boardGeometry');
+        var status = selected('statusSystem');
+        var motion = selected('motionPolicy');
+        return {
+          boardGeometry: board ? { id: board.value, name: board.dataset.name } : null,
+          statusSystem: status ? { id: status.value, name: status.dataset.name } : null,
+          motionPolicy: motion ? { id: motion.value, name: motion.dataset.name } : null
+        };
+      }
+
+      function invalidateReceipt(message) {
+        if (!receipt && !receiptMarkdown) return;
+        receipt = null;
+        receiptMarkdown = '';
+        exportButtons.forEach(function (button) { button.disabled = true; });
+        receiptPreview.textContent = message;
+        copyFallback.hidden = true;
+      }
+
+      function updatePreview() {
+        var values = selections();
+        var completed = 0;
+        selectionGroups.forEach(function (group) {
+          var value = values[group];
+          document.getElementById(previewIds[group]).textContent = value ? value.name : 'Not selected';
+          if (value) completed += 1;
+        });
+        document.getElementById('dock-readout').textContent = completed + ' of 3 selected · ' + (meaningfulComment(comment.value) ? 'comment ready' : 'comment required');
+        invalidateReceipt('Review changed. Generate a new revision-bound receipt.');
+      }
+
+      function meaningfulComment(value) {
+        var trimmed = value.trim();
+        return trimmed.length >= 20 && trimmed.split(/\s+/).filter(Boolean).length >= 4;
+      }
+
+      function draftPayload() {
+        var values = selections();
+        return {
+          schema: 'studio.decision-draft/1',
+          decisionId: DECISION_ID,
+          revision: PROTOTYPE_REVISION,
+          selections: {
+            boardGeometry: values.boardGeometry ? values.boardGeometry.id : null,
+            statusSystem: values.statusSystem ? values.statusSystem.id : null,
+            motionPolicy: values.motionPolicy ? values.motionPolicy.id : null
+          },
+          reviewer: reviewer.value,
+          comment: comment.value,
+          motion: root.dataset.motion,
+          updatedAt: new Date().toISOString()
+        };
+      }
+
+      function saveDraft() {
+        clearTimeout(saveTimer);
+        if (draftCleared) {
+          try { localStorage.removeItem(STORAGE_KEY); } catch (error) {}
+          return;
+        }
+        try {
+          var draft = draftPayload();
+          localStorage.setItem(STORAGE_KEY, JSON.stringify(draft));
+          draftStatus.classList.remove('error');
+          draftStatus.textContent = 'Draft saved locally · ' + new Date(draft.updatedAt).toLocaleTimeString();
+        } catch (error) {
+          draftStatus.classList.add('error');
+          draftStatus.textContent = 'Draft not persisted — export before closing.';
+        }
+      }
+
+      function queueSave() {
+        clearTimeout(saveTimer);
+        draftCleared = false;
+        draftStatus.textContent = 'Saving local draft…';
+        saveTimer = setTimeout(saveDraft, 350);
+      }
+
+      function applyDraft(draft) {
+        if (!draft || draft.decisionId !== DECISION_ID || draft.revision !== PROTOTYPE_REVISION) return false;
+        selectionGroups.forEach(function (group) {
+          var value = draft.selections && draft.selections[group];
+          if (!value) return;
+          var radio = document.querySelector('input[name="' + group + '"][value="' + value + '"]');
+          if (radio) radio.checked = true;
+        });
+        reviewer.value = typeof draft.reviewer === 'string' && draft.reviewer ? draft.reviewer : 'David';
+        comment.value = typeof draft.comment === 'string' ? draft.comment : '';
+        if (draft.motion === 'off') setMotion('off', false);
+        updatePreview();
+        return true;
+      }
+
+      function loadDraft() {
+        try {
+          var raw = localStorage.getItem(STORAGE_KEY);
+          if (!raw) return;
+          var draft = JSON.parse(raw);
+          if (applyDraft(draft)) draftStatus.textContent = 'Local draft restored · ' + new Date(draft.updatedAt).toLocaleString();
+        } catch (error) {
+          draftStatus.classList.add('error');
+          draftStatus.textContent = 'Stored draft could not be read. A fresh draft is active.';
+        }
+      }
+
+      function clearDraft() {
+        clearTimeout(saveTimer);
+        draftCleared = true;
+        selectionGroups.forEach(function (group) { document.querySelectorAll('input[name="' + group + '"]').forEach(function (radio) { radio.checked = false; }); });
+        reviewer.value = 'David';
+        comment.value = '';
+        reviewer.removeAttribute('aria-invalid');
+        comment.removeAttribute('aria-invalid');
+        validation.textContent = '';
+        receipt = null;
+        receiptMarkdown = '';
+        exportButtons.forEach(function (button) { button.disabled = true; });
+        receiptPreview.textContent = 'Complete all three selections and the required comment, then generate a receipt.';
+        copyFallback.hidden = true;
+        try { localStorage.removeItem(STORAGE_KEY); } catch (error) {}
+        updatePreview();
+        draftStatus.textContent = 'Draft cleared · local storage removed';
+      }
+
+      function setDesk(open) {
+        deskPanel.hidden = !open;
+        deskToggle.setAttribute('aria-expanded', String(open));
+        deskToggle.textContent = open ? 'Close Review Desk' : 'Open Review Desk';
+      }
+
+      function setMotion(mode, persist) {
+        root.dataset.motion = mode;
+        var off = mode === 'off';
+        var toggle = document.getElementById('motion-toggle');
+        toggle.setAttribute('aria-pressed', String(off));
+        toggle.textContent = off ? 'Motion: off' : 'Motion: auto';
+        if (persist !== false) queueSave();
+      }
+
+      function resetDemo() {
+        clearTimeout(demoTimer);
+        var card = document.getElementById('motion-card');
+        card.classList.remove('demo-running', 'demo-complete');
+        document.getElementById('demo-state').textContent = 'Demo ready · no transition running';
+        document.getElementById('run-demo').disabled = false;
+      }
+
+      function runDemo() {
+        resetDemo();
+        var card = document.getElementById('motion-card');
+        var state = document.getElementById('demo-state');
+        document.getElementById('run-demo').disabled = true;
+        state.textContent = 'Demo event running · STUDIO-P0-014 Verification → Docked';
+        card.classList.add('demo-running');
+        var immediate = root.dataset.motion === 'off' || window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+        demoTimer = setTimeout(function () {
+          card.classList.remove('demo-running');
+          card.classList.add('demo-complete');
+          state.textContent = 'Demo event complete · committed fixture transition shown';
+          document.getElementById('run-demo').disabled = false;
+        }, immediate ? 20 : 950);
+      }
+
+      function stablePayload() {
+        return {
+          schema: 'studio.review-receipt/1',
+          decisionId: DECISION_ID,
+          question: QUESTION,
+          prototypeRevision: PROTOTYPE_REVISION,
+          artifact: ARTIFACT_PATH,
+          sourceBasisCommit: SOURCE_BASIS_COMMIT,
+          linearIssue: LINEAR_ISSUE,
+          selections: selections(),
+          reviewer: reviewer.value.trim(),
+          comment: comment.value.trim(),
+          reviewedAt: new Date().toISOString()
+        };
+      }
+
+      function hex(buffer) {
+        return Array.prototype.map.call(new Uint8Array(buffer), function (byte) { return byte.toString(16).padStart(2, '0'); }).join('');
+      }
+
+      function markdownFor(data) {
+        var commentLines = data.comment.split(/\r?\n/).map(function (line) { return '> ' + line; }).join('\n');
+        return [
+          '# DEC-002 review receipt',
+          '',
+          '- **Schema:** `' + data.schema + '`',
+          '- **Board geometry:** ' + data.selections.boardGeometry.name + ' (`' + data.selections.boardGeometry.id + '`)',
+          '- **Status system:** ' + data.selections.statusSystem.name + ' (`' + data.selections.statusSystem.id + '`)',
+          '- **Motion policy:** ' + data.selections.motionPolicy.name + ' (`' + data.selections.motionPolicy.id + '`)',
+          '- **Reviewer:** ' + data.reviewer,
+          '- **Reviewed at:** ' + data.reviewedAt,
+          '- **Prototype revision:** `' + data.prototypeRevision + '`',
+          '- **Artifact:** `' + data.artifact + '`',
+          '- **Source basis commit:** `' + data.sourceBasisCommit + '`',
+          '- **Linear issue:** ' + data.linearIssue,
+          '- **Checksum:** `' + data.checksum + '`',
+          '',
+          '## Reviewer comment',
+          '',
+          commentLines,
+          '',
+          '_Required before Done: post this receipt to Linear NEO-120. This local receipt does not approve implementation._',
+          ''
+        ].join('\n');
+      }
+
+      async function generateReceipt() {
+        setDesk(true);
+        updatePreview();
+        var values = selections();
+        var missing = selectionGroups.filter(function (group) { return !values[group]; });
+        reviewer.setAttribute('aria-invalid', String(!reviewer.value.trim()));
+        comment.setAttribute('aria-invalid', String(!meaningfulComment(comment.value)));
+        if (missing.length) {
+          validation.textContent = 'Select one option for board geometry, status system, and motion policy.';
+          var first = document.querySelector('input[name="' + missing[0] + '"]');
+          if (first) first.focus();
+          return;
+        }
+        if (!reviewer.value.trim()) {
+          validation.textContent = 'Enter the reviewer name.';
+          reviewer.focus();
+          return;
+        }
+        if (!meaningfulComment(comment.value)) {
+          validation.textContent = 'Add a meaningful review comment of at least 20 characters and four words.';
+          comment.focus();
+          return;
+        }
+        validation.textContent = '';
+        var payload = stablePayload();
+        if (!window.crypto || !window.crypto.subtle) {
+          validation.textContent = 'SHA-256 is unavailable in this browser. The receipt was not generated.';
+          return;
+        }
+        var digest = await window.crypto.subtle.digest('SHA-256', new TextEncoder().encode(JSON.stringify(payload)));
+        payload.checksum = 'sha256:' + hex(digest);
+        receipt = payload;
+        receiptMarkdown = markdownFor(payload);
+        receiptPreview.textContent = JSON.stringify(receipt, null, 2);
+        exportButtons.forEach(function (button) { button.disabled = false; });
+        copyFallback.hidden = true;
+        saveDraft();
+      }
+
+      function downloadMarkdown() {
+        if (!receiptMarkdown) return;
+        var blob = new Blob([receiptMarkdown], { type: 'text/markdown;charset=utf-8' });
+        var url = URL.createObjectURL(blob);
+        var anchor = document.createElement('a');
+        anchor.href = url;
+        anchor.download = 'DEC-002-receipt-r1.md';
+        document.body.appendChild(anchor);
+        anchor.click();
+        anchor.remove();
+        setTimeout(function () { URL.revokeObjectURL(url); }, 0);
+      }
+
+      function showCopyFallback() {
+        fallbackText.value = receiptMarkdown;
+        copyFallback.hidden = false;
+        fallbackText.focus();
+        fallbackText.select();
+        draftStatus.textContent = 'Clipboard unavailable · Markdown selected for manual copy';
+      }
+
+      async function copyMarkdown() {
+        if (!receiptMarkdown) return;
+        try {
+          if (!navigator.clipboard || !navigator.clipboard.writeText) throw new Error('Clipboard unavailable');
+          await navigator.clipboard.writeText(receiptMarkdown);
+          draftStatus.textContent = 'Markdown receipt copied';
+        } catch (error) {
+          try {
+            fallbackText.value = receiptMarkdown;
+            copyFallback.hidden = false;
+            fallbackText.focus();
+            fallbackText.select();
+            if (!document.execCommand || !document.execCommand('copy')) throw new Error('Legacy copy unavailable');
+            copyFallback.hidden = true;
+            draftStatus.textContent = 'Markdown receipt copied';
+          } catch (fallbackError) {
+            showCopyFallback();
+          }
+        }
+      }
+
+      document.querySelectorAll('input[type="radio"]').forEach(function (radio) {
+        radio.addEventListener('change', function () { updatePreview(); queueSave(); });
+      });
+      reviewer.addEventListener('input', function () { reviewer.removeAttribute('aria-invalid'); invalidateReceipt('Review changed. Generate a new revision-bound receipt.'); queueSave(); });
+      comment.addEventListener('input', function () { comment.removeAttribute('aria-invalid'); updatePreview(); queueSave(); });
+      document.getElementById('tab-compare').addEventListener('click', function () { setSurface('compare', false); });
+      document.getElementById('tab-operate').addEventListener('click', function () { setSurface('operate', false); });
+      document.querySelector('.surface-tabs').addEventListener('keydown', function (event) {
+        if (!['ArrowLeft', 'ArrowRight', 'Home', 'End'].includes(event.key)) return;
+        event.preventDefault();
+        var next = event.key === 'ArrowLeft' || event.key === 'Home' ? 'compare' : 'operate';
+        setSurface(next, true);
+      });
+      document.getElementById('run-demo').addEventListener('click', runDemo);
+      document.getElementById('reset-demo').addEventListener('click', resetDemo);
+      document.getElementById('motion-toggle').addEventListener('click', function () { setMotion(root.dataset.motion === 'off' ? 'auto' : 'off'); });
+      deskToggle.addEventListener('click', function () { setDesk(deskPanel.hidden); });
+      document.getElementById('dock-generate').addEventListener('click', generateReceipt);
+      document.getElementById('generate-receipt').addEventListener('click', generateReceipt);
+      document.getElementById('clear-draft').addEventListener('click', clearDraft);
+      document.getElementById('copy-markdown').addEventListener('click', copyMarkdown);
+      document.getElementById('download-markdown').addEventListener('click', downloadMarkdown);
+      window.addEventListener('pagehide', saveDraft);
+      document.addEventListener('visibilitychange', function () { if (document.visibilityState === 'hidden') saveDraft(); });
+
+      renderBoards();
+      renderStatus();
+      renderOperate();
+      loadDraft();
+      updatePreview();
+    }());
+  </script>
+</body>
+</html>
